@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { BrowserRouter as Router, Route } from 'react-router-dom'
+import { Provider } from 'react-redux'
 import logo from './logo.svg';
 import './App.css';
 
@@ -18,4 +20,10 @@ class App extends Component {
   }
 }
 
-export default App;
+export default ({ store }) => (
+  <Provider store={store}>
+    <Router>
+      <Route component={App} />
+    </Router>
+  </Provider>
+)
