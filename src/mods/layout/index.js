@@ -6,14 +6,8 @@ const TopMenuBar = () => (
     <Menu fixed='top' inverted>
       <Container>
         <Menu.Item as='a' header>
-          <Image
-            size='mini'
-            src='/logo.png'
-            className='mr1'
-          />
-          Project Name
+          ChainBook
         </Menu.Item>
-        <Menu.Item as='a'>Home</Menu.Item>
 
         <Dropdown item simple text='Dropdown'>
           <Dropdown.Menu>
