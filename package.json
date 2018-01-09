@@ -3,6 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
+    "babel-eslint": "^8.2.1",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-config-semistandard": "^12.0.0",
+    "eslint-config-standard": "^11.0.0-beta.0",
+    "eslint-plugin-react": "^7.5.1",
     "react-scripts": "1.0.17"
   },
   "dependencies": {
@@ -24,6 +29,10 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint --ext .js --ext .jsx --ignore-pattern 'src/style/semantic/*' src server",
+    "lint:watch": "esw --watch --ext .js --ext .jsx --ignore-pattern 'src/style/semantic/*' src server",
+    "clean": "rm -vfr build coverage test-results.xml stats.json",
+    "yrebuild": "yarn clean; yarn run clean; rm -f .yarnclean; rm -fr node_modules/; yarn install"
   }
 }
