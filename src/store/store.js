@@ -2,12 +2,13 @@
 import { List } from 'immutable'
 import { createStore, applyMiddleware, compose } from 'redux'
 import promiseMiddleware from 'redux-promise'
+import thunkMiddleware from 'redux-thunk'
 import createHistory from 'history/createBrowserHistory'
 import reducer, { addReducer } from './reducer'
 
 
 export const history = createHistory()
-let middleWares = List.of(promiseMiddleware)
+let middleWares = List.of(thunkMiddleware, promiseMiddleware)
 
 function addMiddleware (mw) {
   middleWares = middleWares.push(mw)

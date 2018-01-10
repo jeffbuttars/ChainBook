@@ -5,6 +5,7 @@ import { Route, Switch } from 'react-router-dom'
 import { Container, Segment, Sidebar } from 'semantic-ui-react'
 import Footer from './Footer'
 import TopBar from './TopBar'
+import SideBarContent from './SideBar'
 import Home from 'home'
 import Inspector from 'inspector'
 
@@ -39,9 +40,7 @@ class UnAuthed extends React.Component {
             vertical
             basic
           >
-            <div className='mt4 pa1'>
-              Sidebar stuff
-            </div>
+          <SideBarContent />
           </Sidebar>
           <Sidebar.Pusher as={Container} className='mt5'>
 

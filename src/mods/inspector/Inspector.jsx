@@ -7,14 +7,12 @@ class Inspector extends React.Component {
 
   componentDidMount() {
     console.log('ON MOUNT', this.props)
-
-    this.props.actions.web3.getGasPrice(this.props.web3)
+    this.props.actions.web3.getGasPrice()
   }
 
   static componentConnect = {
     state: {
-      'web3': 'web3.web3:object',
-      'gasPrice': 'web3.gasPrice'
+      'web3': ':object'
     },
 
     actions: {
