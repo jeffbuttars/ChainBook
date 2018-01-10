@@ -8,6 +8,7 @@ const stateFromPath = (state, path) => {
   // Return a piece of state defined by it's dot deliminited path
   // path: 'path.to.piece.of.state'
   // Expects that immutable objects are used within the path given
+  console.log('stateFromPath', state, path)
   const parts = path.split('.')
   const root = state[parts[0]]
   const tail = parts.slice(1)
