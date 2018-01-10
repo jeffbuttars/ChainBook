@@ -6,8 +6,8 @@ import * as consts from './constants'
 const defaultWeb3 = Map({
   'web3': null,
   'gasPrice': Map({
-    wei: 0,
-    eth: 0,
+    wei: '',
+    eth: '',
     _timer: null
   })
 })
@@ -32,6 +32,11 @@ export default handleActions({
     }
 
     const {gasPrice, timer} = action.payload
+    if (gasPrice === '0') {
+      return state.set(
+        'gasPrice', Map({wei: '', eth: '', '_timer': timer})
+      )
+    }
 
     console.log('GAS PRICE:', gasPrice, web3Local.utils.fromWei(gasPrice))
     return state.set(

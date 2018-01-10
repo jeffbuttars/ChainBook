@@ -1,5 +1,6 @@
 import React from 'react'
 import Reduxer from 'comp-builder/reduxer'
+import { Statistic, Header } from 'semantic-ui-react'
 
 class SideBar extends React.Component {
   static componentConnect = {
@@ -14,12 +15,17 @@ class SideBar extends React.Component {
 
     return (
       <div className='mt4 pa1'>
-        <div>
-          {wei}
-        </div>
-        <div>
-          {eth}
-        </div>
+        <Header inverted >Last Gas</Header>
+        <Statistic.Group size='mini' className='w-90'>
+          <Statistic inverted >
+            <Statistic.Label> Wei </Statistic.Label>
+            <Statistic.Value>{wei}</Statistic.Value>
+          </Statistic>
+          <Statistic inverted >
+            <Statistic.Label>ETH</Statistic.Label>
+            <Statistic.Value>{eth}</Statistic.Value>
+          </Statistic>
+        </Statistic.Group>
       </div>
     )
   }

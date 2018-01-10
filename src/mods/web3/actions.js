@@ -24,7 +24,7 @@ export const getGasPrice = () => (dispatch, getState) => {
       clearTimeout(_timer)
   }
 
-  const timer = setTimeout(() => dispatch(getGasPrice()), 10000)
+  const timer = setTimeout(() => dispatch(getGasPrice()), 90000)
 
   // Dispatch the action that does the actual call
   dispatch(_getGasPrice(w3, timer))

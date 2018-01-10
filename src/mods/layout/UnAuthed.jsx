@@ -15,7 +15,7 @@ class UnAuthed extends React.Component {
     super(props)
 
     this.state = {
-      sideBarOpen: false
+      sideBarOpen: true
     }
   }
 

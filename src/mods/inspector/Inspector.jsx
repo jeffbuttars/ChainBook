@@ -1,25 +1,7 @@
 import React from 'react'
 import { Header, Input } from 'semantic-ui-react'
-import Reduxer from 'comp-builder/reduxer'
-import * as web3Actions from 'web3/actions'
 
 class Inspector extends React.Component {
-
-  componentDidMount() {
-    console.log('ON MOUNT', this.props)
-    this.props.actions.web3.getGasPrice()
-  }
-
-  static componentConnect = {
-    state: {
-      'web3': ':object'
-    },
-
-    actions: {
-      'web3': web3Actions
-    }
-  }
-
   render () {
     return (
       <div>
@@ -39,4 +21,4 @@ class Inspector extends React.Component {
   }
 }
 
-export default Reduxer(Inspector)
+export default Inspector
