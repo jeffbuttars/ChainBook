@@ -9,17 +9,21 @@ const defaultWeb3 = Map({
 })
 
 
+const web3Local = new Web3()
+
+
 export default handleActions({
   '@@INIT': (state, action) => {
-    console.log('WEB#', Web3)
-    const web3 = new Web3('http://localhost:8545')
+    console.log('WEB#', process.env.REACT_APP_ETH_NODE_ADDR)
+    const web3 = new Web3(process.env.REACT_APP_ETH_NODE_ADDR)
 
     return state.set('web3', web3)
   },
   [consts.GET_GAS_PRICE]: (state, action) => {
+      console.log('GAS PRICE ERROR:', action.error)
       const gasPrice = action.payload
 
-      console.log('GAS PRICE:', gasPrice)
+      console.log('GAS PRICE:', gasPrice, web3Local.utils.fromWei(gasPrice))
       return state.set('gasPrice', gasPrice)
   }
 },

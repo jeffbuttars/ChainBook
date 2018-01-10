@@ -3,14 +3,9 @@ import * as consts from './constants'
 
 export const getGasPrice = createAction(
   consts.GET_GAS_PRICE,
-  (web3) => new Promise((resolve, reject) => {
-      web3.eth.getGasPrice((error, result) => {
-        if (error) {
-            reject(error)
-            return
-        }
-
-        resolve(result)
-      })
-  })
+  (web3) => {
+    console.log('GET GS', web3.eth.getGasPrice)
+    // console.log('GET GS RES', web3.eth.getGasPrice())
+    return web3.eth.getGasPrice()
+  }
 )

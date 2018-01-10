@@ -5,10 +5,10 @@ import * as web3Actions from 'web3/actions'
 
 class Inspector extends React.Component {
 
-  onComponentDidMount() {
+  componentDidMount() {
     console.log('ON MOUNT', this.props)
 
-    this.props.actions.web3.getGasPrice(this.props.web3.web3)
+    this.props.actions.web3.getGasPrice(this.props.web3)
   }
 
   static componentConnect = {
