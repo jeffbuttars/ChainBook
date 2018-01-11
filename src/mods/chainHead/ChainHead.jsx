@@ -1,14 +1,16 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import Reduxer from 'comp-builder/reduxer'
+import * as web3Actions from 'web3/actions'
 
 class ChainHead extends React.Component {
   static componentConnect = {
     state: {
       'web3': ':object'
+    },
+    actions: {
+      'web3': web3Actions
     }
-    // actions: {
-    //   'web3': web3Actions
-    // }
   }
 
   render () {
@@ -35,7 +37,7 @@ class ChainHead extends React.Component {
               {gasPrice.wei} / {gasPrice.eth}
             </div>
             <div className='flex'>
-              {blockNumber}
+              <Link to={`/block/${blockNumber}`}>{blockNumber}</Link>
             </div>
             <div className='flex'>
               {hashRate}

@@ -5,6 +5,7 @@ import TopBar from './TopBar'
 import Home from 'home'
 import Inspector from 'inspector'
 import ChainHead from 'chainHead'
+import Block from 'block'
 // import Footer from './Footer'
 // import SideBarContent from './SideBar'
 
@@ -68,6 +69,7 @@ class UnAuthed extends React.Component {
           <Switch>
             <Route exact path='/inspector' component={Inspector} />
             <Route exact path='/chainhead' component={ChainHead} />
+            <Route path='/block/:number' component={Block} />
             <Route component={Home} />
           </Switch>
 
