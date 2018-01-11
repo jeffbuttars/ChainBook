@@ -1,6 +1,6 @@
 import { handleActions } from 'redux-actions'
 import { Map, fromJS } from 'immutable'
-import Web3 from 'web3'
+// import Web3 from 'web3'
 import * as consts from './constants'
 
 const defaultBlock = Map({
@@ -8,7 +8,7 @@ const defaultBlock = Map({
 })
 
 
-const web3Local = new Web3()
+// const web3Local = new Web3()
 
 export default handleActions({
   [consts.GET]: (state, action) => {
@@ -21,6 +21,6 @@ export default handleActions({
 
     const block = action.payload
 
-    return state.setIn(['byNumber', block.number], fromJS(block))
+    return state.setIn(['byNumber', `${block.number}`], fromJS(block))
   }
 }, defaultBlock)
