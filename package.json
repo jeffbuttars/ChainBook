@@ -27,13 +27,12 @@
     "web3": "^1.0.0-beta.27"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject",
+    "start": ". ./.env.sh && react-scripts start",
+    "build": ". ./.env.sh && react-scripts build",
+    "test": ". ./.env.sh && react-scripts test --env=jsdom",
+    "eject": ". ./.env.sh && react-scripts eject",
     "lint": "eslint --ext .js --ext .jsx --ignore-pattern 'src/style/semantic/*' src server",
     "lint:watch": "esw --watch --ext .js --ext .jsx --ignore-pattern 'src/style/semantic/*' src server",
-    "clean": "rm -vfr build coverage test-results.xml stats.json",
-    "yrebuild": "yarn clean; yarn run clean; rm -f .yarnclean; rm -fr node_modules/; yarn install"
+    "yrebuild": "yarn autoclean --force; rm -f .yarnclean; rm -fr node_modules/; yarn install"
   }
 }

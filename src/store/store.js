@@ -16,16 +16,29 @@ function addMiddleware (mw) {
 }
 
 export default function makeStore (initial = {}) {
-  let enhancers = applyMiddleware(...middleWares.toJS())
+  // let enhancers = applyMiddleware(...middleWares.toJS())
+  const composeEnhancers = (process.env.NODE_ENV === 'development' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) ?
+    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
+      serialize: true
+    }) : compose
 
-  if (process.env.NODE_ENV !== 'production') {
-    // Add the chrome redux dev tools middleware fun
-    const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
-    enhancers = composeEnhancers(enhancers)
-  }
+  // if (process.env.NODE_ENV === 'development') {
+  //   // Add the chrome redux dev tools middleware fun
+  //   console.log('Adding Redux Devtools Middleware')
+  //   const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({serialize: true}) || compose
+  //   enhancers = composeEnhancers(enhancers)
+  // }
 
-  const red = reducer()
-  const store = createStore(red, initial, enhancers)
+  // enhancers = composer(enhancers)
+    const store = createStore(reducer(), initial, composeEnhancers(
+      applyMiddleware(...middleWares.toJS())
+    ))
+
+  // console.log('enhancers:', enhancers)
+  // console.table(enhancers)
+
+  // console.log('STORE:', store)
+  // console.table(store)
 
   return store
 }

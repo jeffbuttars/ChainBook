@@ -7,13 +7,28 @@ const defaultWeb3 = Map({
   'web3': null,
   'gasPrice': Map({
     wei: '',
-    eth: '',
-    _timer: null
-  })
+    eth: ''
+  }),
+  // 'coinbase': '',
+  'blockNumber': '',
+  'hashRate': '',
+  // 'work': '',
+  '_globalInfoTimer': null
 })
 
 
 const web3Local = new Web3()
+
+const simpleCheckSet = (state, action, name) => {
+  console.log(`${action.type}::${name} : ${action.payload}`)
+
+  if (action.error) {
+    console.error(`${action.type} ERROR:`, action.payload)
+    return state
+  }
+
+  return state.set(name, action.payload)
+}
 
 
 export default handleActions({
@@ -23,25 +38,24 @@ export default handleActions({
 
     return state.set('web3', web3)
   },
+  [consts.GLOBAL_TIMER_REF]: (state, action) => state.set('_globalTimerRef', action.payload || null),
+  [consts.GET_COINBASE]: (state, action) => simpleCheckSet(state, action, 'coinbase'),
+  [consts.GET_BLOCK_NUMBER]: (state, action) => simpleCheckSet(state, action, 'blockNumber'),
+  [consts.GET_HASHRATE]: (state, action) => simpleCheckSet(state, action, 'hashRate'),
   [consts.GET_GAS_PRICE]: (state, action) => {
-    console.log('GAS PRICE paylod:', action.payload)
+    const gasPrice = action.payload
 
     if (action.error) {
-      console.log('GAS PRICE ERROR:', action.payload)
+      console.error('GET_GAS_PRICE:', action.payload)
       return state
     }
 
-    const {gasPrice, timer} = action.payload
-    if (gasPrice === '0') {
-      return state.set(
-        'gasPrice', Map({wei: '', eth: '', '_timer': timer})
-      )
-    }
+    // if (gasPrice === '0') {
+    //   return state.set('gasPrice', Map({wei: '', eth: ''}))
+    // }
 
-    console.log('GAS PRICE:', gasPrice, web3Local.utils.fromWei(gasPrice))
-    return state.set(
-      'gasPrice', Map({wei: gasPrice, eth: web3Local.utils.fromWei(gasPrice), '_timer': timer})
-    )
+    // console.log('GAS PRICE:', gasPrice, web3Local.utils.fromWei(gasPrice))
+    return state.set('gasPrice', Map({wei: gasPrice, eth: web3Local.utils.fromWei(gasPrice)}))
   }
 },
   defaultWeb3

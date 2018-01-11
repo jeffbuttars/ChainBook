@@ -1,1 +1,6 @@
 export const GET_GAS_PRICE = Symbol('WEB3/GET_GAS_PRICE').toString()
+export const GET_COINBASE = Symbol('WEB3/GET_COINBASE').toString()
+export const GET_HASHRATE = Symbol('WEB3/GET_HASHRATE').toString()
+export const GET_BLOCK_NUMBER = Symbol('WEB3/GET_BLOCK_NUMBER').toString()
+export const GET_WORK = Symbol('WEB3/GET_WORK').toString()
+export const GLOBAL_TIMER_REF = Symbol('WEB3/GLOBAL_TIMER_REF').toString()

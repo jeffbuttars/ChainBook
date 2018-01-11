@@ -1,20 +1,17 @@
 import { createAction } from 'redux-actions'
 import * as consts from './constants'
 
-const _getGasPrice = createAction(
-  consts.GET_GAS_PRICE,
-  (w3, timer) => new Promise(
-    (resolve, reject) => {
-        const prom = w3.eth.getGasPrice()
-        prom.then(
-          (gasPrice) => resolve({gasPrice, timer}),
-          (error) => reject({error, timer})
-        )
-      }
-    )
-  )
+const _globalTimerRef = createAction(consts.GLOBAL_TIMER_REF, timer => timer)
 
-export const getGasPrice = () => (dispatch, getState) => {
+const getGasPrice = createAction(consts.GET_GAS_PRICE, w3 => w3.eth.getGasPrice())
+const getHashrate = createAction(consts.GET_HASHRATE, w3 => w3.eth.getHashrate())
+const getBlockNumber = createAction(consts.GET_BLOCK_NUMBER, w3 => w3.eth.getBlockNumber())
+// const getCoinbase = createAction(consts.GET_COINBASE, w3 => w3.eth.getCoinbase())
+// const getWork = createAction(consts.GET_WORK, w3 => w3.eth.getWork())
+
+export const getGlobalInfo = () => (dispatch, getState) => {
+  console.log('getGlobalInfo', getState())
+
   // build a thunk for handling the timeout.
   const state = getState()
   const w3 = state.web3.get('web3')
@@ -24,8 +21,17 @@ export const getGasPrice = () => (dispatch, getState) => {
       clearTimeout(_timer)
   }
 
-  const timer = setTimeout(() => dispatch(getGasPrice()), 90000)
+  if (process.env.REACT_APP_GLOBAL_REFRESH_MS) {
+    dispatch(_globalTimerRef(
+      setTimeout(() => dispatch(getGlobalInfo()), parseInt(process.env.REACT_APP_GLOBAL_REFRESH_MS, 10))
+    ))
+  }
 
-  // Dispatch the action that does the actual call
-  dispatch(_getGasPrice(w3, timer))
+  dispatch(getGasPrice(w3))
+  dispatch(getBlockNumber(w3))
+  // dispatch(getCoinbase(w3))
+  dispatch(getHashrate(w3))
+  // dispatch(getWork(w3))
+
+  console.log('getGlobalInfo  DONE')
 }
