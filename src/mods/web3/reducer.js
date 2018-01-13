@@ -35,6 +35,7 @@ export default handleActions({
   '@@INIT': (state, action) => {
     console.log('WEB#', process.env.REACT_APP_ETH_NODE_ADDR)
     const web3 = new Web3(process.env.REACT_APP_ETH_NODE_ADDR)
+    console.log('WEB3 instance:', web3)
 
     return state.set('web3', web3)
   },

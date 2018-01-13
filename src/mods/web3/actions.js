@@ -3,9 +3,9 @@ import * as consts from './constants'
 
 const _globalTimerRef = createAction(consts.GLOBAL_TIMER_REF, timer => timer)
 
-const getGasPrice = createAction(consts.GET_GAS_PRICE, w3 => w3.eth.getGasPrice())
-const getHashrate = createAction(consts.GET_HASHRATE, w3 => w3.eth.getHashrate())
-const getBlockNumber = createAction(consts.GET_BLOCK_NUMBER, w3 => w3.eth.getBlockNumber())
+export const getGasPrice = createAction(consts.GET_GAS_PRICE, w3 => w3.eth.getGasPrice())
+export const getHashrate = createAction(consts.GET_HASHRATE, w3 => w3.eth.getHashrate())
+export const getBlockNumber = createAction(consts.GET_BLOCK_NUMBER, w3 => w3.eth.getBlockNumber())
 // const getCoinbase = createAction(consts.GET_COINBASE, w3 => w3.eth.getCoinbase())
 // const getWork = createAction(consts.GET_WORK, w3 => w3.eth.getWork())
 
