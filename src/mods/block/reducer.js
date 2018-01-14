@@ -1,5 +1,5 @@
 import { handleActions } from 'redux-actions'
-import { Map, fromJS } from 'immutable'
+import { Map, List, fromJS } from 'immutable'
 // import Web3 from 'web3'
 import * as consts from './constants'
 
@@ -19,8 +19,17 @@ export default handleActions({
       return state
     }
 
-    const block = action.payload
+    const number = action.payload.number
+    let block = fromJS(action.payload)
+    const trans = block.get('transactions', List())
 
-    return state.setIn(['byNumber', `${block.number}`], fromJS(block))
+    if (trans.size > 0) {
+      if (typeof trans.get(0) !== 'string') {
+        console.log('TRANS OBJECT FOUND', trans.toJS())
+        block = block.set('transactions', trans.map(obj => obj.get('hash')))
+      }
+    }
+
+    return state.setIn(['byNumber', `${number}`], block)
   }
 }, defaultBlock)

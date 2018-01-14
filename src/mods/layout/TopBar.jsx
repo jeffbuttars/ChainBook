@@ -31,10 +31,12 @@ class TopBar extends React.Component {
             ChainBook
           </Menu.Item>
 
-          <Dropdown item simple text='Tools'>
+          <Dropdown item text='Tools'>
             <Dropdown.Menu>
               <Dropdown.Item as={Link} to='/inspector'>Inspector</Dropdown.Item>
               <Dropdown.Item as={Link} to='/chainhead'>Chain Head</Dropdown.Item>
+              <Dropdown.Item as={Link} to='/block/latest'>Block</Dropdown.Item>
+              <Dropdown.Item >Stuff</Dropdown.Item>
               <Dropdown.Divider />
               <Dropdown.Header>Header Item</Dropdown.Header>
               <Dropdown.Item>

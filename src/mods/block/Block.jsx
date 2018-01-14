@@ -1,6 +1,5 @@
 import React from 'react'
-import { Button, Label, Icon, Input, Divider } from 'semantic-ui-react'
-import { Link } from 'react-router-dom'
+import { Header, Button, Icon, Input, Divider } from 'semantic-ui-react'
 import Reduxer from 'comp-builder/reduxer'
 import * as web3Actions from 'web3/actions'
 import * as blockActions from './actions'
@@ -9,7 +8,7 @@ import BlockView from './BlockView'
 class Block extends React.Component {
 
   componentDidMount () {
-    const { match: { params: { number } }, web3, block, actions } = this.props
+    const { match: { params: { number = 'latest' } }} = this.props
     this.goToBlock(number, false)
   }
 
@@ -49,7 +48,7 @@ class Block extends React.Component {
   }
 
   render () {
-    const { match: { params: { number } } } = this.props
+    const { match: { params: { number }, url } } = this.props
     const { block } = this.props
     const blk = block.getIn(['byNumber', number])
 
@@ -59,7 +58,7 @@ class Block extends React.Component {
 
       return (
         <div>
-          <div className='f2 mr3'>Block</div>
+          <Header size='large'>Block</Header>
           <div className='flex mv3'>
               <Button
                 icon
@@ -95,7 +94,7 @@ class Block extends React.Component {
 
           <Divider />
 
-          {!!blk && (<BlockView {...(blk.toJS())} />)}
+          {!!blk && (<BlockView {...(blk.toJS())} url={url} />)}
 
         </div>
         )

@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { Header } from 'semantic-ui-react'
 import Reduxer from 'comp-builder/reduxer'
 import * as web3Actions from 'web3/actions'
 
@@ -18,7 +19,7 @@ class ChainHead extends React.Component {
 
     return (
       <div>
-        <h3> Chain Head </h3>
+        <Header size='large'> Chain Head </Header>
         <div className='flex'>
           <div className='flex flex-column mr2'>
             <div className='flex'>

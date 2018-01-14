@@ -65,11 +65,14 @@ class UnAuthed extends React.Component {
       <div className='bg-white pa0 ma0'>
         <TopBar />
 
-        <div className='mt5 pl3'>
+        <div className='mt5 pl3 pt2'>
           <Switch>
             <Route exact path='/inspector' component={Inspector} />
             <Route exact path='/chainhead' component={ChainHead} />
-            <Route path='/block/:number' component={Block} />
+            <Route
+              path='/block'
+              render={props => <Block {...props} />}
+            />
             <Route component={Home} />
           </Switch>
 

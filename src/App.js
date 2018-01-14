@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Route } from 'react-router-dom'
 import { Provider } from 'react-redux'
 // import logo from './logo.svg';
 import 'semantic-ui-css/semantic.min.css'
+import './css/semantic.flatly.min.css'
+// import './css/semantic.journal.min.css'
 import Layout from 'layout'
 import './App.css';
 

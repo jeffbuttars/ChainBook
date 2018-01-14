@@ -5,9 +5,7 @@ class Inspector extends React.Component {
   render () {
     return (
       <div>
-        <Header >
-          Inspector
-        </Header>
+        <Header size='large'> Inspector </Header>
         <div className='flex'>
           <Input
             action={{ color: 'green', labelPosition: 'left', icon: 'search', content: 'inspect'}}
