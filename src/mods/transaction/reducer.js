@@ -5,7 +5,7 @@ import * as blkConsts from 'block/constants'
 
 export default handleActions({
   [blkConsts.GET]: (state, action) => {
-    console.log('Trans reducer BLOCK/GET', action.payload)
+    // console.log('Trans reducer BLOCK/GET', action.payload)
     if (action.error) {
       console.error('Transaction reducer BLOCK/GET:', action.payload)
       return state
@@ -16,12 +16,12 @@ export default handleActions({
 
     if (trans.size > 0) {
       if (typeof trans.get(0) !== 'string') {
-        console.log('trans reducer BLOCK/GET processing trans objects...')
+        // console.log('trans reducer BLOCK/GET processing trans objects...')
         return trans.reduce((p, v) => p.set(v.get('hash'), v), state)
       }
     }
 
-    console.log('trans reducer BLOCK/GET ignoring trans hashes')
+    // console.log('trans reducer BLOCK/GET ignoring trans hashes')
     return state
   }
 }, Map())

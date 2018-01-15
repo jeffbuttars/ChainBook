@@ -1,6 +1,7 @@
 import React from 'react'
 import Reduxer from 'comp-builder/reduxer'
 import { List, Map } from 'immutable'
+import TransCard from 'transaction/TransCards'
 import * as web3Actions from 'web3/actions'
 import * as blockActions from './actions'
 
@@ -45,7 +46,9 @@ class Transactions extends React.Component {
 
     return (
       <div>
-        {blk.get('transactions', List).map((hash, idx) => (<div key={idx}>{transaction.get(hash, Map()).get('hash', 'NO TRAN')}</div>))}
+        {blk.get('transactions', List).map(
+            (hash, idx) => <TransCard key={idx} {...transaction.get(hash, Map()).toJS()}/>
+          )}
       </div>
       )
   }

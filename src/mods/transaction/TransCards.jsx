@@ -1,11 +1,11 @@
 import React from 'react'
 import { Card } from 'semantic-ui-react'
 
-export default ({hash}) => {
+export default ({hash, blockNumber}) => {
   return (
     <Card fluid >
       <Card.Header content={hash} />
-      <Card.Meta content={block} />
+      <Card.Meta content={blockNumber} />
     </Card>
   )
 }
