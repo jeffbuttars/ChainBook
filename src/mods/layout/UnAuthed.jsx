@@ -6,6 +6,7 @@ import Home from 'home'
 import Inspector from 'inspector'
 import ChainHead from 'chainHead'
 import Block from 'block'
+import Hodl from 'hodl'
 // import Footer from './Footer'
 // import SideBarContent from './SideBar'
 
@@ -69,6 +70,7 @@ class UnAuthed extends React.Component {
           <Switch>
             <Route exact path='/inspector' component={Inspector} />
             <Route exact path='/chainhead' component={ChainHead} />
+            <Route exact path='/hodl' component={Hodl} />
             <Route
               path='/block'
               render={props => <Block {...props} />}
