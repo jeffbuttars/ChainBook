@@ -1,5 +1,5 @@
 import { handleActions } from 'redux-actions'
-import { Map, OrderedMap, fromJS } from 'immutable'
+import { Map, OrderedMap } from 'immutable'
 import * as consts from './constants'
 
 const defaults = Map({
@@ -52,7 +52,13 @@ export default handleActions({
     const symData = state.get(symbol, Map())
     const byDay = symData.get('byDay', OrderedMap())
 
-    const merged = Data.reduce((p, v) => p.set(v.time, v), byDay)
+    // the incoming timestamps are number of seconds since 1970, so we need to
+    // convert them to milliseconds.
+    const merged = Data.reduce(
+      (p, v) => {
+        v.time = v.time * 1000
+        return p.set(v.time, Map(v))
+      }, byDay)
     const sorted = merged.sort((a, b) => {
       if (a.time < b.time) {
         return -1

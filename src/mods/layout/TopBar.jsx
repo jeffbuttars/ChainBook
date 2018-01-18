@@ -36,7 +36,7 @@ class TopBar extends React.Component {
               <Dropdown.Item as={Link} to='/inspector'>Inspector</Dropdown.Item>
               <Dropdown.Item as={Link} to='/chainhead'>Chain Head</Dropdown.Item>
               <Dropdown.Item as={Link} to='/block/latest'>Block</Dropdown.Item>
-              <Dropdown.Item as={Link} to='/hodl'>HODL</Dropdown.Item>
+              <Dropdown.Item as={Link} to='/hodl'><span className='b'>HODL</span></Dropdown.Item>
               <Dropdown.Divider />
               <Dropdown.Header>Header Item</Dropdown.Header>
               <Dropdown.Item>

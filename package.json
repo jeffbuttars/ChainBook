@@ -12,8 +12,10 @@
   },
   "dependencies": {
     "axios": "^0.17.1",
+    "datalib": "^1.8.0",
     "history": "^4.7.2",
     "immutable": "^3.8.2",
+    "moment": "^2.20.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-redux": "^5.0.6",
@@ -23,6 +25,7 @@
     "redux-actions": "^2.2.1",
     "redux-promise": "^0.5.3",
     "redux-thunk": "^2.2.0",
+    "regression": "^2.0.1",
     "semantic-ui-css": "^2.2.12",
     "semantic-ui-react": "^0.77.1",
     "victory": "^0.24.5",
