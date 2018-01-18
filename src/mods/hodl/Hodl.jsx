@@ -1,8 +1,8 @@
 import React from 'react'
 import dl from 'datalib'
 import { List, OrderedMap } from 'immutable'
+import { Dropdown } from 'semantic-ui-react'
 import Reduxer from 'comp-builder/reduxer'
-import regression from 'regression'
 import moment from 'moment'
 import {
   VictoryChart,
@@ -12,7 +12,40 @@ import {
 } from 'victory'
 import * as hodlActions from './actions'
 
+// For a given set of x and y inputs return the start
+// and end points of the input regression line
+const linearRegression = (x, y) => {
+  const result = dl.linearRegression(x, y)
+
+  return [
+    {'x': x[0], 'y': (result.slope * x[0]) + result.intercept},
+    {'x': x[x.length - 1], 'y': (result.slope * x[x.length - 1]) + result.intercept}
+  ]
+}
+
+const regressionOptions = [
+  {key: 'combined', text: 'Combined', value: 'combined'},
+  {key: 'low', text: 'Low', value: 'low'},
+  {key: 'high', text: 'High', value: 'high'},
+  {key: 'open', text: 'Open', value: 'open'},
+  {key: 'close', text: 'Close', value: 'close'}
+]
+
 class Hodl extends React.Component {
+  constructor (props) {
+    super(props)
+
+    this.state = {
+      regressions: {
+        low: false,
+        high: false,
+        open: false,
+        close: false,
+        combined: false
+      }
+    }
+  }
+
   static componentConnect = {
     state: {
       'hodl': ':object'
@@ -20,6 +53,22 @@ class Hodl extends React.Component {
     actions: {
       'hodl': hodlActions
     }
+  }
+
+  onRegressionClicked ({value}) {
+    this.setState(() => {
+      const regressions = {
+        low: false,
+        high: false,
+        open: false,
+        close: false,
+        combined: false
+      }
+
+      value.map((v) => regressions[v] = true)
+
+      return {regressions}
+    })
   }
 
   async componentDidMount () {
@@ -55,65 +104,59 @@ class Hodl extends React.Component {
     return axis
   }
 
-  calcRegression = (data) => {
+
+  calcRegressions = (data) => {
     if (data.size < 1) {
       return {}
     }
 
-    // const input = data.reduce((p, v, k) => {
-    //   p.push([k, v.get('high')])
-    //   p.push([k, v.get('low')])
-    //   p.push([k, v.get('open')])
-    //   p.push([k, v.get('close')])
-    //   return p
-    // }, [])
-    const input = data.reduce((p, v, k) => {
-      p.x.push(k)
-      p.x.push(k)
-      p.x.push(k)
-      p.x.push(k)
-      p.y.push(v.get('high'))
-      p.y.push(v.get('low'))
-      p.y.push(v.get('open'))
-      p.y.push(v.get('close'))
+    const points = data.reduce((p, v, k) => {
+      p.combined.x.push(k)
+      p.combined.x.push(k)
+      p.combined.x.push(k)
+      p.combined.x.push(k)
+      p.combined.y.push(v.get('high'))
+      p.combined.y.push(v.get('low'))
+      p.combined.y.push(v.get('open'))
+      p.combined.y.push(v.get('close'))
+
+      p.low.x.push(k)
+      p.high.x.push(k)
+      p.open.x.push(k)
+      p.close.x.push(k)
+
+      p.low.y.push(v.get('low'))
+      p.high.y.push(v.get('high'))
+      p.open.y.push(v.get('open'))
+      p.close.y.push(v.get('close'))
 
       return p
-    }, {x: [], y: []})
+    }, {
+      combined: {x: [], y: []},
+      low: {x: [], y: []},
+      high: {x: [], y: []},
+      open: {x: [], y: []},
+      close: {x: [], y: []}
+      })
 
-    console.log('REGRESSION INPUT', input)
-
-    console.log('DL', dl)
-    const dlResult = dl.linearRegression(input.x, input.y)
-    console.log('REGRESSION  DL RESULT', dlResult)
-
-    const points = [
-      {x: input.x[0], y: (dlResult.slope * input.x[0]) + dlResult.intercept},
-      {x: input.x[input.x.length - 1], y: (dlResult.slope * input.x[input.x.length - 1]) + dlResult.intercept}
-    ]
-
-    console.log('REGRESSION  DL points', points)
-    return points
-
-    // return dlResult
-
-    // const result = regression.linear(input)
-    // const result = regression.power(input)
-    // const result = regression.exponential(input)
-    // const result = regression.logarithmic(input)
-    // const result = regression.polynomial(input)
-
-    // console.log('REGRESSION  RESULT', result)
-    // return result
+    return {
+      combinedPoints: linearRegression(points.combined.x, points.combined.y),
+      lowPoints: linearRegression(points.low.x, points.low.y),
+      highPoints: linearRegression(points.high.x, points.high.y),
+      closePoints: linearRegression(points.close.x, points.close.y),
+      openPoints: linearRegression(points.open.x, points.open.y)
+    }
   }
 
   render () {
     const {hodl} = this.props
     const data = hodl.getIn(['ETH', 'byDay'], OrderedMap())
     const dataArray = data.reduce((p, v) => p.concat(v.toJS()), [])
-    const regPoints = data.size ? this.calcRegression(data) : {}
+
+    // Should cache in state
+    const regPoints = data.size ? this.calcRegressions(data) : {}
     console.log('HODL!!!!', data.toJS())
     console.log('HODL dataArray', dataArray)
-    // {dataArray.map(v => (<div key={v.time} className='pv1'>{v.close}</div>))}
 
     return (
       <div>
@@ -121,6 +164,15 @@ class Hodl extends React.Component {
         {
           data.size ?
             <div>
+              <div>
+                <Dropdown
+                  onChange={(e, v) => this.onRegressionClicked(v)}
+                  placeholder='Regressions'
+                  multiple
+                  selection
+                  options={regressionOptions}
+                />
+              </div>
               <VictoryChart
                 height={300}
                 scale="time"
@@ -173,12 +225,46 @@ class Hodl extends React.Component {
                     }
                   }}
                 />
-                <VictoryLine
-                  data={regPoints}
-                  style={{
-                    data: { strokeWidth: 0.5, strokeOpacity: 0.6}
-                  }}
-                />
+                {this.state.regressions.combined &&
+                  <VictoryLine
+                    data={regPoints.combinedPoints}
+                    style={{
+                      data: { strokeWidth: 0.5, strokeOpacity: 0.6}
+                    }}
+                  />
+                }
+                {this.state.regressions.close &&
+                  <VictoryLine
+                    data={regPoints.closePoints}
+                    style={{
+                      data: { strokeWidth: 0.5, strokeOpacity: 0.6}
+                    }}
+                  />
+                }
+                {this.state.regressions.open &&
+                  <VictoryLine
+                    data={regPoints.openPoints}
+                    style={{
+                      data: { strokeWidth: 0.5, strokeOpacity: 0.6}
+                    }}
+                  />
+                }
+                {this.state.regressions.low &&
+                  <VictoryLine
+                    data={regPoints.lowPoints}
+                    style={{
+                      data: { strokeWidth: 0.5, strokeOpacity: 0.6}
+                    }}
+                  />
+                }
+                {this.state.regressions.high &&
+                  <VictoryLine
+                    data={regPoints.highPoints}
+                    style={{
+                      data: { strokeWidth: 0.5, strokeOpacity: 0.6}
+                    }}
+                  />
+                }
               </VictoryChart>
 
             </div>
