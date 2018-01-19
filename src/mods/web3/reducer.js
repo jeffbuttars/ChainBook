@@ -20,8 +20,6 @@ const defaultWeb3 = Map({
 const web3Local = new Web3()
 
 const simpleCheckSet = (state, action, name) => {
-  console.log(`${action.type}::${name} : ${action.payload}`)
-
   if (action.error) {
     console.error(`${action.type} ERROR:`, action.payload)
     return state
@@ -32,13 +30,7 @@ const simpleCheckSet = (state, action, name) => {
 
 
 export default handleActions({
-  '@@INIT': (state, action) => {
-    console.log('WEB#', process.env.REACT_APP_ETH_NODE_ADDR)
-    const web3 = new Web3(process.env.REACT_APP_ETH_NODE_ADDR)
-    console.log('WEB3 instance:', web3)
-
-    return state.set('web3', web3)
-  },
+  '@@INIT': (state, action) => state.set('web3', new Web3(process.env.REACT_APP_ETH_NODE_ADDR)),
   [consts.GLOBAL_TIMER_REF]: (state, action) => state.set('_globalTimerRef', action.payload || null),
   [consts.GET_COINBASE]: (state, action) => simpleCheckSet(state, action, 'coinbase'),
   [consts.GET_BLOCK_NUMBER]: (state, action) => simpleCheckSet(state, action, 'blockNumber'),
@@ -54,8 +46,6 @@ export default handleActions({
     // if (gasPrice === '0') {
     //   return state.set('gasPrice', Map({wei: '', eth: ''}))
     // }
-
-    // console.log('GAS PRICE:', gasPrice, web3Local.utils.fromWei(gasPrice))
     return state.set('gasPrice', Map({wei: gasPrice, eth: web3Local.utils.fromWei(gasPrice)}))
   }
 },

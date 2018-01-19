@@ -42,14 +42,13 @@ export default ({data, close, open, low, high, ...rest}) => {
   }
 
   const points = calcLines(data)
-  console.log('DataLines points', points)
 
   return (
     <React.Fragment>
       {close &&
         <VictoryLine
           data={points.close}
-          interpolation='natural'
+          interpolation='monotoneX'
           {...rest}
           style={lineStyle('close')}
         />
@@ -57,7 +56,7 @@ export default ({data, close, open, low, high, ...rest}) => {
       {open &&
         <VictoryLine
           data={points.open}
-          interpolation='natural'
+          interpolation='monotoneX'
           {...rest}
           style={lineStyle('open')}
         />
@@ -65,7 +64,7 @@ export default ({data, close, open, low, high, ...rest}) => {
       {low &&
         <VictoryLine
           data={points.low}
-          interpolation='natural'
+          interpolation='monotoneX'
           {...rest}
           style={lineStyle('low')}
         />
@@ -73,7 +72,7 @@ export default ({data, close, open, low, high, ...rest}) => {
       {high &&
         <VictoryLine
           data={points.high}
-          interpolation='natural'
+          interpolation='monotoneX'
           {...rest}
           style={lineStyle('high')}
         />

@@ -16,13 +16,9 @@ import { VictoryLine } from 'victory'
 // For a given linear regression and X find Y
 const linRegFunc = (lin, x) => (lin.slope * x) + lin.intercept
 // For a given linear regression and Y find X
-const linRegFuncForY = (lin, y) => {
-  console.log('linRegFuncForY', lin, y, `${y} - ${lin.intercept} / ${lin.slope}`)
-  return (y - lin.intercept) / lin.slope
-}
+const linRegFuncForY = (lin, y) => (y - lin.intercept) / lin.slope
 
 const linearRegression = (x, y, min) => {
-  console.log('linearRegression', min)
   const result = dl.linearRegression(x, y)
 
   // Find the matching X for the min Y and truncate the regression line to look
@@ -100,13 +96,11 @@ const lineStyle = (line) => ({
 })
 
 export default ({data, combined, close, open, low, high, ...rest}) => {
-  console.log('Regressions', data, combined, close, open, low, high)
   if (!(combined || close || open || low || high)) {
     return <div />
   }
 
   const regPoints = calcRegressions(data)
-  console.log('Regressions points', regPoints)
 
   return (
     <React.Fragment>

@@ -10,8 +10,6 @@ export const getBlockNumber = createAction(consts.GET_BLOCK_NUMBER, w3 => w3.eth
 // const getWork = createAction(consts.GET_WORK, w3 => w3.eth.getWork())
 
 export const getGlobalInfo = () => (dispatch, getState) => {
-  console.log('getGlobalInfo', getState())
-
   // build a thunk for handling the timeout.
   const state = getState()
   const w3 = state.web3.get('web3')
@@ -32,6 +30,4 @@ export const getGlobalInfo = () => (dispatch, getState) => {
   // dispatch(getCoinbase(w3))
   dispatch(getHashrate(w3))
   // dispatch(getWork(w3))
-
-  console.log('getGlobalInfo  DONE')
 }

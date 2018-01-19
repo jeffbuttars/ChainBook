@@ -6,6 +6,10 @@ import moment from 'moment'
 import {
   VictoryChart,
   VictoryAxis,
+  // VictoryCursorContainer,
+  VictoryVoronoiContainer,
+  VictoryTooltip,
+  VictoryLabel,
   VictoryCandlestick
 } from 'victory'
 import Regressions, {regressionColors} from './Regressions'
@@ -47,6 +51,18 @@ const regressionsLabel = (label) => {
   }
 }
 
+const chartDataLabel = (data) => {
+  if (data.childName !== 'candlestick') {
+    return
+  }
+
+  return `${moment(data.time).format('M/D')}\nOpen ${data.open}\nClose ${data.close}\nLow ${data.low}\nHigh ${data.high}`
+}
+
+const ChartDataTooltip = (props) => {
+  return (<VictoryTooltip {...props} style={{}}/>)
+}
+
 class Hodl extends React.Component {
   constructor (props) {
     super(props)
@@ -65,7 +81,8 @@ class Hodl extends React.Component {
         high: false,
         open: false,
         close: false
-      }
+      },
+      cursorData: {}
     }
   }
 
@@ -110,18 +127,15 @@ class Hodl extends React.Component {
   }
 
   onCandlestickToggled ({value}) {
-    console.log('toggle', value)
     this.setState((prevState) => ({candlestick: !prevState.candlestick}))
   }
 
   async componentDidMount () {
-    const {actions, hodl} = this.props
-    const action = await actions.hodl.getDailyHistory('ETH', '90')
+    const {actions} = this.props
+    actions.hodl.getDailyHistory('ETH', '90')
   }
 
   getYAxis = (data) => {
-    console.log('getYAxis data', data)
-
     const allValues = data.reduce((p, v) => {
       return p.concat(v.get('close'), v.get('open'), v.get('low'), v.get('high'))
     }, List())
@@ -143,7 +157,7 @@ class Hodl extends React.Component {
   }
 
   onChartHover ({datum}) {
-    console.log('onChartHover', datum)
+    this.setState(() => ({cursorData: datum}))
   }
 
   render () {
@@ -200,17 +214,35 @@ class Hodl extends React.Component {
                 scale="time"
                 domainPadding={{x: 15}}
                 animate={{duration: 1000}}
-                events={[
-                  {
-                    childName: 'all',
-                    target: 'data',
-                    eventHandlers: {
-                      onClick: (ev, value) => this.onChartHover(ev, value),
-                      onMouseOver: (ev, value) => this.onChartHover(ev, value)
-                    }
-                }
-                ]}
+                events={[{
+                  childName: 'all',
+                  target: 'data',
+                  eventHandlers: {
+                    onClick: (ev, value) => this.onChartHover( value),
+                    onMouseOver: (ev, value) => this.onChartHover(value)
+                  }
+                }]}
+                containerComponent={
+                  <VictoryVoronoiContainer
+                    textAnchor='left'
+                    labelComponent={
+                      <VictoryTooltip
+                        cornerRadius={3}
+                        className='flex tl'
+                        style={{fontSize: 5, strokeWidth: 0.5, strokeOpacity: 0.5, textAnchor: 'left'}}
+                        flyoutStyle={{strokeWidth: 0, fill: '#FFF', fillOpacity: 0.8, filter: 'url(#blurMe)'}}
+
+                      />
+                      }
+                    voronoiDimension="x"
+                    labels={chartDataLabel}
+                  />
+                  }
               >
+                <filter id="blurMe">
+                  <feGaussianBlur in='StrokePaint' stdDeviation="1" />
+                </filter>
+
                 <VictoryAxis
                   tickValues={dataArray.map(t => t.time)}
                   tickFormat={t => moment(t).format('M/D')}
@@ -248,6 +280,7 @@ class Hodl extends React.Component {
 
                 {this.state.candlestick &&
                   <VictoryCandlestick
+                    name='candlestick'
                     candleColors={{positive: '#3A3', negative: '#c43a31'}}
                     data={dataArray}
                     x='time'
@@ -260,8 +293,8 @@ class Hodl extends React.Component {
                     }}
                   />
                 }
-                <Regressions data={data} {...this.state.regressions} />
-                <DataLines data={data} {...this.state.dataLines} />
+                <Regressions name='regressionLines' data={data} {...this.state.regressions} />
+                <DataLines name='dataLines' data={data} {...this.state.dataLines} />
               </VictoryChart>
 
             </div>

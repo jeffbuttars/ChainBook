@@ -10,8 +10,6 @@ const defaults = Map({
 
 export default handleActions({
   [consts.GET_DAILY_HISTORY]: (state, action) => {
-    console.log('HODL/GET_DAILY_HISTORY', action.payload)
-
     if (action.error) {
       console.error('GET:', action.payload)
       return state
