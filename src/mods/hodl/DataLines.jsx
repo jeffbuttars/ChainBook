@@ -1,6 +1,12 @@
 import React from 'react'
 import { VictoryLine } from 'victory'
 
+export const dataLineColors = {
+  close: {color: '#222222', backgroundColor: '#EEE'},
+  open: {color: '#FFA500', backgroundColor: '#EEE'},
+  low: {color: '#FF3333', backgroundColor: '#EEE'},
+  high: {color: '#33CC33', backgroundColor: '#EEE'}
+}
 
 const calcLines = (data) => {
   const dataShape = {
@@ -24,6 +30,12 @@ const calcLines = (data) => {
   }, dataShape)
 }
 
+const lineStyle = (line) => ({
+  data: {
+    strokeWidth: 0.5, strokeOpacity: 0.6, stroke: dataLineColors[line].color
+  }
+})
+
 export default ({data, close, open, low, high, ...rest}) => {
   if (!(close || open || low || high)) {
     return <div />
@@ -39,7 +51,7 @@ export default ({data, close, open, low, high, ...rest}) => {
           data={points.close}
           interpolation='natural'
           {...rest}
-          style={{ data: { strokeWidth: 0.5, strokeOpacity: 0.6, stroke: '#222222'} }}
+          style={lineStyle('close')}
         />
       }
       {open &&
@@ -47,7 +59,7 @@ export default ({data, close, open, low, high, ...rest}) => {
           data={points.open}
           interpolation='natural'
           {...rest}
-          style={{ data: { strokeWidth: 0.5, strokeOpacity: 0.6, stroke: '#FFA500'} }}
+          style={lineStyle('open')}
         />
       }
       {low &&
@@ -55,7 +67,7 @@ export default ({data, close, open, low, high, ...rest}) => {
           data={points.low}
           interpolation='natural'
           {...rest}
-          style={{ data: { strokeWidth: 0.5, strokeOpacity: 0.6, stroke: '#FF3333'} }}
+          style={lineStyle('low')}
         />
       }
       {high &&
@@ -63,7 +75,7 @@ export default ({data, close, open, low, high, ...rest}) => {
           data={points.high}
           interpolation='natural'
           {...rest}
-          style={{ data: { strokeWidth: 0.5, strokeOpacity: 0.6, stroke: '#33CC33'} }}
+          style={lineStyle('high')}
         />
       }
     </React.Fragment>

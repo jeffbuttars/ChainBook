@@ -84,6 +84,21 @@ const calcRegressions = (data) => {
   }
 }
 
+export const regressionColors = {
+  close: {color: '#2222FF', backgroundColor: '#EEE'},
+  open: {color: '#2222FF', backgroundColor: '#EEE'},
+  low: {color: '#8822FF', backgroundColor: '#EEE'},
+  high: {color: '#2288FF', backgroundColor: '#EEE'},
+  combined: {color: '#3333AA', backgroundColor: '#EEE'}
+}
+
+
+const lineStyle = (line) => ({
+  data: {
+    strokeWidth: 0.5, strokeOpacity: 0.6, stroke: regressionColors[line].color
+  }
+})
+
 export default ({data, combined, close, open, low, high, ...rest}) => {
   console.log('Regressions', data, combined, close, open, low, high)
   if (!(combined || close || open || low || high)) {
@@ -99,36 +114,35 @@ export default ({data, combined, close, open, low, high, ...rest}) => {
         <VictoryLine
           data={regPoints.combined}
           {...rest}
-          style={{ data: { strokeWidth: 0.5, strokeOpacity: 0.6, stroke: '#3333AA'} }}
+          style={lineStyle('combined')}
         />
       }
       {close &&
         <VictoryLine
           data={regPoints.close}
           {...rest}
-          style={{ data: { strokeWidth: 0.5, strokeOpacity: 0.6, stroke: '#2222BB'} }}
+          style={lineStyle('close')}
         />
       }
       {open &&
         <VictoryLine
           data={regPoints.open}
           {...rest}
-          style={{ data: { strokeWidth: 0.5, strokeOpacity: 0.6, stroke: '#2222FF'} }}
+          style={lineStyle('close')}
         />
       }
       {low &&
         <VictoryLine
           data={regPoints.low}
           {...rest}
-          style={{ data: { strokeWidth: 0.5, strokeOpacity: 0.6, stroke: '#8822FF'} }}
+          style={lineStyle('close')}
         />
       }
       {high &&
         <VictoryLine
           data={regPoints.high}
           {...rest}
-          style={{ data: { strokeWidth: 0.5, strokeOpacity: 0.6, stroke: '#2288FF'} }}
-
+          style={lineStyle('close')}
         />
       }
     </React.Fragment>

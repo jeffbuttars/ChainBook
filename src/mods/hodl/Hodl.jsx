@@ -8,8 +8,8 @@ import {
   VictoryAxis,
   VictoryCandlestick
 } from 'victory'
-import Regressions from './Regressions'
-import DataLines from './DataLines'
+import Regressions, {regressionColors} from './Regressions'
+import DataLines, {dataLineColors} from './DataLines'
 import * as hodlActions from './actions'
 
 // XXX Need moving averages and resistance lines
@@ -23,11 +23,29 @@ const regressionOptions = [
   {key: 'close', text: 'Close', value: 'close'}
 ]
 const dataLineOptions = [
-  {key: 'low', text: 'Low', value: 'low'},
+  {key: 'low', text: 'Low', value: 'low', className: 'red'},
   {key: 'high', text: 'High', value: 'high'},
   {key: 'open', text: 'Open', value: 'open'},
   {key: 'close', text: 'Close', value: 'close'}
 ]
+
+const dataLineLabel = (label) => {
+  return {
+    style: {
+      ...dataLineColors[label.value]
+    },
+    content: label.text
+  }
+}
+
+const regressionsLabel = (label) => {
+  return {
+    style: {
+      ...regressionColors[label.value]
+    },
+    content: label.text
+  }
+}
 
 class Hodl extends React.Component {
   constructor (props) {
@@ -124,7 +142,9 @@ class Hodl extends React.Component {
     return axis
   }
 
-
+  onChartHover ({datum}) {
+    console.log('onChartHover', datum)
+  }
 
   render () {
     const {hodl} = this.props
@@ -160,6 +180,7 @@ class Hodl extends React.Component {
                       multiple
                       selection
                       options={regressionOptions}
+                      renderLabel={regressionsLabel}
                     />
                   </div>
                   <div className='flex flex-column'>
@@ -170,6 +191,7 @@ class Hodl extends React.Component {
                       multiple
                       selection
                       options={dataLineOptions}
+                      renderLabel={dataLineLabel}
                     />
                   </div>
                 </div>
@@ -177,6 +199,17 @@ class Hodl extends React.Component {
               <VictoryChart
                 scale="time"
                 domainPadding={{x: 15}}
+                animate={{duration: 1000}}
+                events={[
+                  {
+                    childName: 'all',
+                    target: 'data',
+                    eventHandlers: {
+                      onClick: (ev, value) => this.onChartHover(ev, value),
+                      onMouseOver: (ev, value) => this.onChartHover(ev, value)
+                    }
+                }
+                ]}
               >
                 <VictoryAxis
                   tickValues={dataArray.map(t => t.time)}
@@ -213,8 +246,8 @@ class Hodl extends React.Component {
                   }}
                 />
 
-              {this.state.candlestick &&
-                <VictoryCandlestick
+                {this.state.candlestick &&
+                  <VictoryCandlestick
                     candleColors={{positive: '#3A3', negative: '#c43a31'}}
                     data={dataArray}
                     x='time'
