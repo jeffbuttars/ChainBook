@@ -1,6 +1,6 @@
 import React from 'react'
 import { OrderedMap } from 'immutable'
-import { Dropdown, Checkbox } from 'semantic-ui-react'
+import { Dropdown, Checkbox, Button } from 'semantic-ui-react'
 import Reduxer from 'comp-builder/reduxer'
 import {regressionColors} from './Regressions'
 import {dataLineColors} from './DataLines'
@@ -41,6 +41,19 @@ const regressionsLabel = (label) => {
   }
 }
 
+
+const IntervalButton = ({interval, desc, parent}) => (
+  <Button
+    animated
+    onClick={() => parent.fetchHistory(interval)}
+    active={parent.state.interval.value === interval}
+    loading={parent.state.interval.value === interval && parent.state.interval.loading}
+  >
+    <Button.Content visible content={interval} />
+    <Button.Content hidden content={desc} />
+  </Button>
+  )
+
 class Hodl extends React.Component {
   constructor (props) {
     super(props)
@@ -60,7 +73,11 @@ class Hodl extends React.Component {
         open: false,
         close: false
       },
-      cursorData: {}
+      cursorData: {},
+      interval: {
+        value: '1d',
+        loading: false
+      }
     }
   }
 
@@ -108,9 +125,15 @@ class Hodl extends React.Component {
     this.setState((prevState) => ({candlestick: !prevState.candlestick}))
   }
 
-  async componentDidMount () {
+  async fetchHistory (interval) {
     const {actions} = this.props
-    actions.hodl.getDailyHistory('ETH', '90')
+    this.setState({'interval': {value: interval, loading: true}})
+    await actions.hodl.getDailyHistory('ETH', interval)
+    this.setState({'interval': {value: interval, loading: false}})
+  }
+
+  async componentDidMount () {
+    this.fetchHistory(this.state.interval.value)
   }
 
   render () {
@@ -119,11 +142,11 @@ class Hodl extends React.Component {
 
     return (
       <div>
-        <div className='b f1 mv3'>HODL</div>
+        <div className='b f1 mv3 ml3'>HODL</div>
         {
           data.size ?
             <div>
-              <div>
+              <div className='ml3'>
                 <div className='mv2'>
                   <Checkbox
                     toggle
@@ -158,6 +181,20 @@ class Hodl extends React.Component {
                     />
                   </div>
                 </div>
+              </div>
+              <div className='mt2 ml3'>
+                <Button.Group positive>
+                  <IntervalButton parent={this} interval='1Y' desc='1 Year'/>
+                  <IntervalButton parent={this} interval='6M' desc='6 Months'/>
+                  <IntervalButton parent={this} interval='3M' desc='3 Months'/>
+                  <IntervalButton parent={this} interval='1M' desc='1 Month'/>
+                  <IntervalButton parent={this} interval='1w' desc='1 Week'/>
+                  <IntervalButton parent={this} interval='1d' desc='1 Day'/>
+                  <IntervalButton parent={this} interval='12h' desc='12 Hours'/>
+                  <IntervalButton parent={this} interval='6h' desc='6 Hours'/>
+                  <IntervalButton parent={this} interval='1h' desc='1 Hour'/>
+                  <IntervalButton parent={this} interval='15m' desc='15 Min.'/>
+                </Button.Group>
               </div>
               <StockChart data={data} {...this.state} />
             </div>

@@ -43,42 +43,28 @@ export default handleActions({
     const {symbol, result: { data: { Data } }} = action.payload
     // Merge and Order the results by time, earliest to recent
     const symData = state.get(symbol, Map())
-    const byDay = symData.get('byDay', OrderedMap())
 
     // //////////////////////////////
     // Reverse for chart testing
     // let idx = Data.length - 1
-    // const merged = Data.reduce((p, v) => {
+    // const data = Data.reduce((p, v) => {
     //   const otherTime = Data[idx].time
     //   const d = Object.assign({}, v)
     //   d.time = otherTime * 1000
     //   idx -= 1
     //   return p.set(d.time, Map(d))
     // }, OrderedMap())
-    // console.log('REVERSED:', merged.toJS())
+    // console.log('REVERSED:', data.toJS())
     // //////////////////////////////
 
     // the incoming timestamps are number of seconds since 1970, so we need to
     // convert them to milliseconds.
-    const merged = Data.reduce(
+    const data = Data.reduce(
       (p, v) => {
         v.time = v.time * 1000
         return p.set(v.time, Map(v))
-      }, byDay)
+      }, OrderedMap())
 
-    // Should we sort it? 
-    // const sorted = merged.sort((a, b) => {
-    //   if (a.time < b.time) {
-    //     return -1
-    //   }
-
-    //   if (a.time > b.time) {
-    //     return 1
-    //   }
-
-    //   return 0
-    // })
-
-    return state.set(symbol, symData.set('byDay', merged))
+    return state.set(symbol, symData.set('byDay', data))
   }
 }, defaults)

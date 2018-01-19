@@ -17,8 +17,8 @@ const getYAxis = (data) => {
   }, List())
 
   // allValues.push(Math.floor(allValues.get(0) / 100) * 100)
-  const minVal = Math.floor(allValues.min() / 100) * 100
-  const maxVal = Math.ceil(allValues.max() / 100) * 100
+  const minVal = Math.floor(allValues.min() / 10) * 10
+  const maxVal = Math.ceil(allValues.max() / 10) * 10
 
   const diff = maxVal - minVal
   const step = diff / 5
@@ -53,11 +53,10 @@ export default ({data, candlestick, regressions, dataLines}) => {
   return (
     <VictoryChart
       scale="time"
-      domainPadding={{x: 15}}
-      animate={{duration: 1000}}
+      animate={{duration: 500}}
+      padding={{left: 25, top: 10, right: 50, bottom: 50}}
       containerComponent={
         <VictoryVoronoiContainer
-          standalone='true'
           textAnchor='left'
           labelComponent={
             <VictoryTooltip
@@ -78,7 +77,6 @@ export default ({data, candlestick, regressions, dataLines}) => {
       <VictoryAxis
         tickValues={dataArray.map(t => t.time)}
         tickFormat={t => moment(t).format('M/D')}
-        tickCount={data.size}
         fixLabelOverlap={true}
         style={{
           axis: {

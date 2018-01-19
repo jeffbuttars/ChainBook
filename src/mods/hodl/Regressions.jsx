@@ -25,8 +25,15 @@ const linearRegression = (x, y, min) => {
   // a bit cleaner
   const minX = linRegFuncForY(result, min)
 
+  if (result.slope > 0) {
+    return [
+      {'x': minX, 'y': linRegFunc(result, minX)},
+      {'x': x[x.length - 1], 'y': linRegFunc(result, x[x.length - 1])}
+    ]
+  }
+
   return [
-    {'x': minX, 'y': linRegFunc(result, minX)},
+    {'x': x[0], 'y': linRegFunc(result, x[0])},
     {'x': x[x.length - 1], 'y': linRegFunc(result, x[x.length - 1])}
   ]
 }
@@ -71,13 +78,15 @@ const calcRegressions = (data) => {
   const ys = List(points.combined.y)
   const min = ys.min()
 
-  return {
+  const result = {
     combined: linearRegression(points.combined.x, points.combined.y, min),
     low: linearRegression(points.low.x, points.low.y, min),
     high: linearRegression(points.high.x, points.high.y, min),
     close: linearRegression(points.close.x, points.close.y, min),
     open: linearRegression(points.open.x, points.open.y, min)
   }
+
+  return result
 }
 
 export const regressionColors = {
