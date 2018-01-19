@@ -1,30 +1,28 @@
 import React from 'react'
-import dl from 'datalib'
 import { List, OrderedMap } from 'immutable'
-import { Dropdown } from 'semantic-ui-react'
+import { Dropdown, Checkbox } from 'semantic-ui-react'
 import Reduxer from 'comp-builder/reduxer'
 import moment from 'moment'
 import {
   VictoryChart,
   VictoryAxis,
-  VictoryCandlestick,
-  VictoryLine
+  VictoryCandlestick
 } from 'victory'
+import Regressions from './Regressions'
+import DataLines from './DataLines'
 import * as hodlActions from './actions'
 
-// For a given set of x and y inputs return the start
-// and end points of the input regression line
-const linearRegression = (x, y) => {
-  const result = dl.linearRegression(x, y)
+// XXX Need moving averages and resistance lines
 
-  return [
-    {'x': x[0], 'y': (result.slope * x[0]) + result.intercept},
-    {'x': x[x.length - 1], 'y': (result.slope * x[x.length - 1]) + result.intercept}
-  ]
-}
 
 const regressionOptions = [
   {key: 'combined', text: 'Combined', value: 'combined'},
+  {key: 'low', text: 'Low', value: 'low'},
+  {key: 'high', text: 'High', value: 'high'},
+  {key: 'open', text: 'Open', value: 'open'},
+  {key: 'close', text: 'Close', value: 'close'}
+]
+const dataLineOptions = [
   {key: 'low', text: 'Low', value: 'low'},
   {key: 'high', text: 'High', value: 'high'},
   {key: 'open', text: 'Open', value: 'open'},
@@ -36,12 +34,19 @@ class Hodl extends React.Component {
     super(props)
 
     this.state = {
+      candlestick: true,
       regressions: {
         low: false,
         high: false,
         open: false,
         close: false,
         combined: false
+      },
+      dataLines: {
+        low: false,
+        high: false,
+        open: false,
+        close: false
       }
     }
   }
@@ -55,7 +60,7 @@ class Hodl extends React.Component {
     }
   }
 
-  onRegressionClicked ({value}) {
+  onRegressionChanged ({value}) {
     this.setState(() => {
       const regressions = {
         low: false,
@@ -71,12 +76,29 @@ class Hodl extends React.Component {
     })
   }
 
+  onDataLineChanged ({value}) {
+    this.setState(() => {
+      const dataLines = {
+        low: false,
+        high: false,
+        open: false,
+        close: false
+      }
+
+      value.map((v) => dataLines[v] = true)
+
+      return {dataLines}
+    })
+  }
+
+  onCandlestickToggled ({value}) {
+    console.log('toggle', value)
+    this.setState((prevState) => ({candlestick: !prevState.candlestick}))
+  }
+
   async componentDidMount () {
     const {actions, hodl} = this.props
-    console.log('componentDidMount HODL!!!!', hodl.toJS())
-
     const action = await actions.hodl.getDailyHistory('ETH', '90')
-    console.log('componentDidMount HODL result', action)
   }
 
   getYAxis = (data) => {
@@ -90,7 +112,6 @@ class Hodl extends React.Component {
     // console.log('getYAxis allValues', allValues.toJS())
     const minVal = Math.floor(allValues.min() / 100) * 100
     const maxVal = Math.ceil(allValues.max() / 100) * 100
-    console.log('MIN MSX', minVal, maxVal)
 
     const diff = maxVal - minVal
     const step = diff / 5
@@ -100,63 +121,18 @@ class Hodl extends React.Component {
       axis.push(i)
     }
 
-    console.log('getYAxis axis', axis)
     return axis
   }
 
 
-  calcRegressions = (data) => {
-    if (data.size < 1) {
-      return {}
-    }
-
-    const points = data.reduce((p, v, k) => {
-      p.combined.x.push(k)
-      p.combined.x.push(k)
-      p.combined.x.push(k)
-      p.combined.x.push(k)
-      p.combined.y.push(v.get('high'))
-      p.combined.y.push(v.get('low'))
-      p.combined.y.push(v.get('open'))
-      p.combined.y.push(v.get('close'))
-
-      p.low.x.push(k)
-      p.high.x.push(k)
-      p.open.x.push(k)
-      p.close.x.push(k)
-
-      p.low.y.push(v.get('low'))
-      p.high.y.push(v.get('high'))
-      p.open.y.push(v.get('open'))
-      p.close.y.push(v.get('close'))
-
-      return p
-    }, {
-      combined: {x: [], y: []},
-      low: {x: [], y: []},
-      high: {x: [], y: []},
-      open: {x: [], y: []},
-      close: {x: [], y: []}
-      })
-
-    return {
-      combinedPoints: linearRegression(points.combined.x, points.combined.y),
-      lowPoints: linearRegression(points.low.x, points.low.y),
-      highPoints: linearRegression(points.high.x, points.high.y),
-      closePoints: linearRegression(points.close.x, points.close.y),
-      openPoints: linearRegression(points.open.x, points.open.y)
-    }
-  }
 
   render () {
     const {hodl} = this.props
-    const data = hodl.getIn(['ETH', 'byDay'], OrderedMap())
+    let data = hodl.getIn(['ETH', 'byDay'], OrderedMap())
     const dataArray = data.reduce((p, v) => p.concat(v.toJS()), [])
-
     // Should cache in state
-    const regPoints = data.size ? this.calcRegressions(data) : {}
-    console.log('HODL!!!!', data.toJS())
-    console.log('HODL dataArray', dataArray)
+    // console.log('HODL!!!!', data.toJS())
+    // console.log('HODL dataArray', dataArray)
 
     return (
       <div>
@@ -165,16 +141,40 @@ class Hodl extends React.Component {
           data.size ?
             <div>
               <div>
-                <Dropdown
-                  onChange={(e, v) => this.onRegressionClicked(v)}
-                  placeholder='Regressions'
-                  multiple
-                  selection
-                  options={regressionOptions}
-                />
+                <div className='mv2'>
+                  <Checkbox
+                    toggle
+                    label='Candlestick'
+                    onChange={(e, v) => this.onCandlestickToggled(v)}
+                    checked={this.state.candlestick}
+                  />
+                </div>
+
+                <div className='flex'>
+                  <div className='flex flex-column'>
+                    <div className='b'>Regression Chart</div>
+                    <Dropdown
+                      className='mr2'
+                      onChange={(e, v) => this.onRegressionChanged(v)}
+                      placeholder=''
+                      multiple
+                      selection
+                      options={regressionOptions}
+                    />
+                  </div>
+                  <div className='flex flex-column'>
+                    <div className='b'>Price Line Chart</div>
+                    <Dropdown
+                      onChange={(e, v) => this.onDataLineChanged(v)}
+                      placeholder=''
+                      multiple
+                      selection
+                      options={dataLineOptions}
+                    />
+                  </div>
+                </div>
               </div>
               <VictoryChart
-                height={300}
                 scale="time"
                 domainPadding={{x: 15}}
               >
@@ -213,58 +213,22 @@ class Hodl extends React.Component {
                   }}
                 />
 
+              {this.state.candlestick &&
                 <VictoryCandlestick
-                  candleColors={{positive: '#3A3', negative: '#c43a31'}}
-                  data={dataArray}
-                  x='time'
-                  style={{
-                    data: {
-                      strokeWidth: 0.75,
-                      strokeOpacity: 0.5,
-                      fillOpacity: 0.8
-                    }
-                  }}
-                />
-                {this.state.regressions.combined &&
-                  <VictoryLine
-                    data={regPoints.combinedPoints}
+                    candleColors={{positive: '#3A3', negative: '#c43a31'}}
+                    data={dataArray}
+                    x='time'
                     style={{
-                      data: { strokeWidth: 0.5, strokeOpacity: 0.6}
+                      data: {
+                        strokeWidth: 0.75,
+                        strokeOpacity: 0.5,
+                        fillOpacity: 0.8
+                      }
                     }}
                   />
                 }
-                {this.state.regressions.close &&
-                  <VictoryLine
-                    data={regPoints.closePoints}
-                    style={{
-                      data: { strokeWidth: 0.5, strokeOpacity: 0.6}
-                    }}
-                  />
-                }
-                {this.state.regressions.open &&
-                  <VictoryLine
-                    data={regPoints.openPoints}
-                    style={{
-                      data: { strokeWidth: 0.5, strokeOpacity: 0.6}
-                    }}
-                  />
-                }
-                {this.state.regressions.low &&
-                  <VictoryLine
-                    data={regPoints.lowPoints}
-                    style={{
-                      data: { strokeWidth: 0.5, strokeOpacity: 0.6}
-                    }}
-                  />
-                }
-                {this.state.regressions.high &&
-                  <VictoryLine
-                    data={regPoints.highPoints}
-                    style={{
-                      data: { strokeWidth: 0.5, strokeOpacity: 0.6}
-                    }}
-                  />
-                }
+                <Regressions data={data} {...this.state.regressions} />
+                <DataLines data={data} {...this.state.dataLines} />
               </VictoryChart>
 
             </div>

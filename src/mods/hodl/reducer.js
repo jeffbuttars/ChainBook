@@ -43,14 +43,22 @@ export default handleActions({
     // }
 
     const {symbol, result: { data: { Data } }} = action.payload
-    // const {symbol, result} = action.payload
-
-    console.log('HODL DAILIES symbol', symbol)
-    console.log('HODL DAILIES Data', Data)
-
     // Merge and Order the results by time, earliest to recent
     const symData = state.get(symbol, Map())
     const byDay = symData.get('byDay', OrderedMap())
+
+    // //////////////////////////////
+    // Reverse for chart testing
+    // let idx = Data.length - 1
+    // const merged = Data.reduce((p, v) => {
+    //   const otherTime = Data[idx].time
+    //   const d = Object.assign({}, v)
+    //   d.time = otherTime * 1000
+    //   idx -= 1
+    //   return p.set(d.time, Map(d))
+    // }, OrderedMap())
+    // console.log('REVERSED:', merged.toJS())
+    // //////////////////////////////
 
     // the incoming timestamps are number of seconds since 1970, so we need to
     // convert them to milliseconds.
@@ -59,18 +67,20 @@ export default handleActions({
         v.time = v.time * 1000
         return p.set(v.time, Map(v))
       }, byDay)
-    const sorted = merged.sort((a, b) => {
-      if (a.time < b.time) {
-        return -1
-      }
 
-      if (a.time > b.time) {
-        return 1
-      }
+    // Should we sort it? 
+    // const sorted = merged.sort((a, b) => {
+    //   if (a.time < b.time) {
+    //     return -1
+    //   }
 
-      return 0
-    })
+    //   if (a.time > b.time) {
+    //     return 1
+    //   }
 
-    return state.set(symbol, symData.set('byDay', sorted))
+    //   return 0
+    // })
+
+    return state.set(symbol, symData.set('byDay', merged))
   }
 }, defaults)
