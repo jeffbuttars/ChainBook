@@ -31,10 +31,10 @@
     "web3": "^1.0.0-beta.27"
   },
   "scripts": {
-    "start": ". ./.env.sh && react-scripts start",
-    "build": ". ./.env.sh && react-scripts build",
-    "test": ". ./.env.sh && react-scripts test --env=jsdom",
-    "eject": ". ./.env.sh && react-scripts eject",
+    "start": "if [ ! -f ./.env.sh ]; then . ./.env.sh; fi; react-scripts start",
+    "build": "if [ ! -f ./.env.sh ]; then . ./.env.sh; fi; react-scripts build",
+    "test": "if [ ! -f ./.env.sh ]; then . ./.env.sh; fi; react-scripts test --env=jsdom",
+    "eject": "if [ ! -f ./.env.sh ]; then . ./.env.sh; fi; react-scripts eject",
     "lint": "eslint --ext .js --ext .jsx --ignore-pattern 'src/style/semantic/*' src server",
     "lint:watch": "esw --watch --ext .js --ext .jsx --ignore-pattern 'src/style/semantic/*' src server",
     "yrebuild": "yarn autoclean --force; rm -f .yarnclean; rm -fr node_modules/; yarn install"
