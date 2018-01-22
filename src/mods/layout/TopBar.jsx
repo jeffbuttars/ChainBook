@@ -7,7 +7,12 @@ import * as web3Actions from 'web3/actions'
 class TopBar extends React.Component {
   componentDidMount() {
     // Kick off the gas price retreiver
-    this.props.actions.web3.getGlobalInfo()
+    try {
+      this.props.actions.web3.getGlobalInfo()
+    } catch(e) {
+      console.error('Unable to fetch global chain info\n')
+      console.error(e)
+    }
   }
 
   static componentConnect = {
