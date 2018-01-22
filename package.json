@@ -27,13 +27,15 @@
     "redux-thunk": "^2.2.0",
     "semantic-ui-css": "^2.2.12",
     "semantic-ui-react": "^0.77.1",
+    "serve": "^6.4.8",
     "victory": "^0.24.5",
     "web3": "^1.0.0-beta.27"
   },
   "scripts": {
-    "start": "if [ -f ./.env.sh ]; then . ./.env.sh; fi; react-scripts start",
-    "build": "if [ -f ./.env.sh ]; then . ./.env.sh; fi; react-scripts build",
-    "test": "if [ -f ./.env.sh ]; then . ./.env.sh; fi; react-scripts test --env=jsdom",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "build:clean": "rm -fvr build/*",
+    "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "lint": "eslint --ext .js --ext .jsx --ignore-pattern 'src/style/semantic/*' src server",
     "lint:watch": "esw --watch --ext .js --ext .jsx --ignore-pattern 'src/style/semantic/*' src server",
