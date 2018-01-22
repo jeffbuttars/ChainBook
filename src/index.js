@@ -3,7 +3,8 @@ import ReactDOM from 'react-dom';
 import { Map } from 'immutable'
 import './index.css';
 import App from './App';
-import registerServiceWorker from './registerServiceWorker';
+// import registerServiceWorker from './registerServiceWorker';
+import {unregister} from './registerServiceWorker';
 import { reducers as modReducers } from 'mods'
 import Store from './store'
 import { addReducer } from './store/reducer'
@@ -13,4 +14,6 @@ addReducer(Map(modReducers))
 const store = Store()
 
 ReactDOM.render(<App store={store}/>, document.getElementById('root'));
-registerServiceWorker();
+
+// registerServiceWorker();
+unregister()
