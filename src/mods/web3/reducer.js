@@ -1,6 +1,7 @@
 import { handleActions } from 'redux-actions'
 import { Map } from 'immutable'
 import Web3 from 'web3'
+import {APP_INIT_ACTION} from 'store/store'
 import * as consts from './constants'
 
 const defaultWeb3 = Map({
@@ -28,9 +29,12 @@ const simpleCheckSet = (state, action, name) => {
   return state.set(name, action.payload)
 }
 
-
 export default handleActions({
-  '@@INIT': (state, action) => state.set('web3', new Web3(process.env.REACT_APP_ETH_NODE_ADDR)),
+  [APP_INIT_ACTION]: (state, action) => {
+    const web3 = new Web3(process.env.REACT_APP_ETH_NODE_ADDR)
+    // console.log(`${APP_INIT_ACTION}, creating Web3 instance for ${process.env.REACT_APP_ETH_NODE_ADDR} : ${web3}`)
+    return state.set('web3', web3)
+  },
   [consts.GLOBAL_TIMER_REF]: (state, action) => state.set('_globalTimerRef', action.payload || null),
   [consts.GET_COINBASE]: (state, action) => simpleCheckSet(state, action, 'coinbase'),
   [consts.GET_BLOCK_NUMBER]: (state, action) => simpleCheckSet(state, action, 'blockNumber'),
