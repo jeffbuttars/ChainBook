@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "axios": "^0.17.1",
+    "classnames": "^2.2.5",
+    "cryptofont": "^0.1.1",
     "datalib": "^1.8.0",
     "history": "^4.7.2",
     "immutable": "^3.8.2",
