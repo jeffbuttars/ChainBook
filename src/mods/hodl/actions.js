@@ -11,6 +11,9 @@ const getHourHistoryURL = (symbol, days, priceIn) =>
 const getDailyHistoryURL = (symbol, days, priceIn) =>
   `${API_BASE}/histoday?fsym=${symbol}&tsym=${priceIn}&limit=${days}`
 
+const getPricePairURL = (from, to) =>
+  `${API_BASE}/price?fsym=${from}&tsyms=${to}&extraParmas=ChainBook`
+
 const intervalMap = {
   '1Y': (symbol, priceIn) => getDailyHistoryURL(symbol, 365, priceIn), // One Year
   '6M': (symbol, priceIn) => getDailyHistoryURL(symbol, 183, priceIn), // 6 Months
@@ -45,3 +48,39 @@ export const getDailyHistory = createAction(
     })
   }
 )
+
+const _tickerTimerRef = createAction(consts.TICKER_TIMER_REF, timer => timer)
+
+export const getPricePair = createAction(
+  consts.GET_PRICE_PAIR,
+  (fsym, to) => {
+    const tsyms = Array.isArray(to) ? to.join(',') : to
+
+    // Encapsulate the from symbol in the result
+    return new Promise((resolve, reject) =>
+      axios.get(getPricePairURL(fsym, tsyms))
+        .then(
+          result => resolve({result, fsym}),
+          err => reject(err)
+        )
+    )
+  }
+)
+
+export const startPricePairTicker = (pairs = [['ETH', 'USD']]) => (dispatch, getState) => {
+  const state = getState()
+  const _timer = state.hodl.get('_tickers_timer')
+
+  if (_timer) {
+      clearTimeout(_timer)
+  }
+
+  if (process.env.REACT_APP_TICKER_REFRESH_MS) {
+    dispatch(_tickerTimerRef(
+      setTimeout(() => dispatch(startPricePairTicker(pairs)), parseInt(process.env.REACT_APP_TICKER_REFRESH_MS, 10))
+    ))
+  }
+
+  console.log('startPricePairTicker pairs', pairs, ...pairs)
+  pairs.map(pair => dispatch(getPricePair(...pair)))
+}

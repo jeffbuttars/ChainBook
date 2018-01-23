@@ -1,14 +1,37 @@
 import { handleActions } from 'redux-actions'
-import { Map, OrderedMap } from 'immutable'
+import { Map, OrderedMap,fromJS } from 'immutable'
 import * as consts from './constants'
 
 const defaults = Map({
   'ETH': Map({
     byDay: OrderedMap()
-  })
+  }),
+  'tickers': Map(),
+  '_tickers_timer': null
 })
 
 export default handleActions({
+  [consts.TICKER_TIMER_REF]: (state, action) => state.set('_tickers_timer', action.payload),
+  [consts.GET_PRICE_PAIR]: (state, action) => {
+    // console.log('GET_PRICE_PAIR', action)
+
+    if (action.error) {
+      console.error('GET:', action.payload)
+      return state
+    }
+
+    const {fsym, result: {data}} = action.payload
+    // console.log('GET_PRICE_PAIR fsym', fsym)
+    // console.log('GET_PRICE_PAIR data', data)
+
+    // The data object has shape:
+    // {
+    //  tsymA: curPrice,
+    //  tsymB: curPrice,
+    //  ...
+    // }
+    return state.setIn(['tickers', fsym], fromJS(data))
+  },
   [consts.GET_DAILY_HISTORY]: (state, action) => {
     if (action.error) {
       console.error('GET:', action.payload)
