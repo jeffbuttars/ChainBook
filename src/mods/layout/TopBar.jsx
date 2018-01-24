@@ -1,12 +1,11 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { Dropdown, Menu, Icon, Image } from 'semantic-ui-react'
+import { Dropdown, Menu, Icon } from 'semantic-ui-react'
 import classNames from 'classnames'
 import Reduxer from 'comp-builder/reduxer'
 import * as web3Actions from 'web3/actions'
 import * as hodlActions from 'hodl/actions'
 import Logo from './Logo'
-{/* import logo from 'static/img/chainbook-logo.svg' */}
 
 const suiCurrencyMap = {
   EUR: 'euro',
@@ -34,19 +33,41 @@ const CurrencyIcon = ({sym, ...rest}) => {
   )
 }
 
-const CurTickerPrice = ({fsym, tsym, price}) => {
-  return (
-    <div className='flex pr2 pt2'>
-      <div className='flex flex-column pt1'>
-        <CurrencyIcon sym={fsym} className='f6 near-white' />
-        <CurrencyIcon sym={tsym} className='pt1 f6 near-white'/>
+class CurTickerPrice extends React.Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      lastPrice: props.price || 0
+    }
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextState.lastPrice === this.props.price) {
+      return false
+    }
+
+    return true
+  }
+
+  render () {
+    const {fsym, tsym, price} =  this.props
+
+    const indicator = price > this.state.lastPrice ? 'green' : 'red'
+    this.setState(() => ({lastPrice: price}))
+
+    return (
+      <div className='flex pr2 pt2'>
+        <div className='flex flex-column pt1'>
+          <CurrencyIcon sym={fsym} className='f6 near-white' />
+          <CurrencyIcon sym={tsym} className='pt1 f6 near-white'/>
+        </div>
+        <div className='flex flex-column  bg-animate hover-bg-green'>
+          <div className='f5 b white'> {fsym} </div>
+          <div className='f5 b white'> {price} </div>
+        </div>
       </div>
-      <div className='flex flex-column'>
-        <div className='f5 b white'> {fsym} </div>
-        <div className='f5 b white'> {price} </div>
-      </div>
-    </div>
-  )
+    )
+  }
 }
 
 class TopBar extends React.Component {
