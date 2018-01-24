@@ -2,6 +2,7 @@ import { createAction } from 'redux-actions'
 import axios from 'axios'
 import * as consts from './constants'
 
+const tickerRefresh = process.env.REACT_APP_TICKER_REFRESH_MS ? parseInt(process.env.REACT_APP_TICKER_REFRESH_MS, 10) : null
 const API_BASE = 'https://min-api.cryptocompare.com/data'
 
 const getMinuteHistoryURL = (symbol, days, priceIn) =>
@@ -75,12 +76,12 @@ export const startPricePairTicker = (pairs = [['ETH', 'USD']]) => (dispatch, get
       clearTimeout(_timer)
   }
 
-  if (process.env.REACT_APP_TICKER_REFRESH_MS) {
+  if (tickerRefresh) {
     dispatch(_tickerTimerRef(
-      setTimeout(() => dispatch(startPricePairTicker(pairs)), parseInt(process.env.REACT_APP_TICKER_REFRESH_MS, 10))
+      setTimeout(dispatch, tickerRefresh, startPricePairTicker(pairs))
     ))
   }
 
-  console.log('startPricePairTicker pairs', pairs, ...pairs)
+  // console.log('startPricePairTicker pairs', pairs, ...pairs)
   pairs.map(pair => dispatch(getPricePair(...pair)))
 }

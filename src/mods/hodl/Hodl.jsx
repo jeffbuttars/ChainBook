@@ -1,6 +1,6 @@
 import React from 'react'
 import { OrderedMap } from 'immutable'
-import { Dropdown, Checkbox, Button } from 'semantic-ui-react'
+import { Dropdown, Checkbox } from 'semantic-ui-react'
 import Reduxer from 'comp-builder/reduxer'
 import {regressionColors} from './Regressions'
 import {dataLineColors} from './DataLines'

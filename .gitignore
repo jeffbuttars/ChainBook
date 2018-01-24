@@ -22,4 +22,6 @@ yarn-error.log*
 
 .env.sh
 
+*.swp
+
 
