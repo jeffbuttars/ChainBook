@@ -9,14 +9,11 @@ export default ({color = '333333', width = '5em', height = '5em', className}) =>
     viewBox="0 0 297 297"
     version="1.1"
     id="svg8"
-    class={classNames(...defClassName, className)}
+    className={classNames(...defClassName, className)}
   >
     <defs id="defs2" />
     <metadata id="metadata5"> </metadata>
-    <g
-      inkscapeLabel="Layer 1"
-      inkscapeGroupmode="layer"
-      id="layer1">
+    <g id="layer1">
       <g
         id="g1101"
         transform="matrix(2.5680424,0,0,2.5680424,-116.56607,-168.7037)"

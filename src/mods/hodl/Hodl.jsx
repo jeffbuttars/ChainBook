@@ -22,6 +22,18 @@ const dataLineOptions = [
   {key: 'open', text: 'Open', value: 'open'},
   {key: 'close', text: 'Close', value: 'close'}
 ]
+const intervalOptions = [
+  {key:'15m', value:'15m', text:'15 Min.'},
+  {key:'1h', value:'1h', text:'1 Hour'},
+  {key:'6h', value:'6h', text:'6 Hours'},
+  {key:'12h', value:'12h', text:'12 Hours'},
+  {key:'1d', value:'1d', text:'1 Day'},
+  {key:'1w', value:'1w', text:'1 Week'},
+  {key:'1M', value:'1M', text:'1 Month'},
+  {key:'3M', value:'3M', text:'3 Months'},
+  {key:'6M', value:'6M', text:'6 Months'},
+  {key:'1Y', value:'1Y', text:'1 Year'}
+]
 
 const dataLineLabel = (label) => {
   return {
@@ -40,19 +52,6 @@ const regressionsLabel = (label) => {
     content: label.text
   }
 }
-
-
-const IntervalButton = ({interval, desc, parent}) => (
-  <Button
-    animated
-    onClick={() => parent.fetchHistory(interval)}
-    active={parent.state.interval.value === interval}
-    loading={parent.state.interval.value === interval && parent.state.interval.loading}
-  >
-    <Button.Content visible content={interval} />
-    <Button.Content hidden content={desc} />
-  </Button>
-  )
 
 class Hodl extends React.Component {
   constructor (props) {
@@ -88,6 +87,10 @@ class Hodl extends React.Component {
     actions: {
       'hodl': hodlActions
     }
+  }
+
+  onIntervalChanged ({value}) {
+    this.fetchHistory(value)
   }
 
   onRegressionChanged ({value}) {
@@ -156,11 +159,20 @@ class Hodl extends React.Component {
                   />
                 </div>
 
-                <div className='flex'>
-                  <div className='flex flex-column'>
+                <div className='flex flex-wrap'>
+                  <div className='flex flex-column mr2'>
+                    <div className='b'>Interval</div>
+                    <Dropdown
+                      onChange={(e, v) => this.onIntervalChanged(v)}
+                      selection
+                      options={intervalOptions}
+                      defaultValue='1d'
+                    />
+                  </div>
+
+                  <div className='flex flex-column mr2'>
                     <div className='b'>Regression Chart</div>
                     <Dropdown
-                      className='mr2'
                       onChange={(e, v) => this.onRegressionChanged(v)}
                       placeholder=''
                       multiple
@@ -169,7 +181,7 @@ class Hodl extends React.Component {
                       renderLabel={regressionsLabel}
                     />
                   </div>
-                  <div className='flex flex-column'>
+                  <div className='flex flex-column mr2'>
                     <div className='b'>Price Line Chart</div>
                     <Dropdown
                       onChange={(e, v) => this.onDataLineChanged(v)}
@@ -181,20 +193,7 @@ class Hodl extends React.Component {
                     />
                   </div>
                 </div>
-              </div>
-              <div className='mt2 ml3'>
-                <Button.Group positive>
-                  <IntervalButton parent={this} interval='1Y' desc='1 Year'/>
-                  <IntervalButton parent={this} interval='6M' desc='6 Months'/>
-                  <IntervalButton parent={this} interval='3M' desc='3 Months'/>
-                  <IntervalButton parent={this} interval='1M' desc='1 Month'/>
-                  <IntervalButton parent={this} interval='1w' desc='1 Week'/>
-                  <IntervalButton parent={this} interval='1d' desc='1 Day'/>
-                  <IntervalButton parent={this} interval='12h' desc='12 Hours'/>
-                  <IntervalButton parent={this} interval='6h' desc='6 Hours'/>
-                  <IntervalButton parent={this} interval='1h' desc='1 Hour'/>
-                  <IntervalButton parent={this} interval='15m' desc='15 Min.'/>
-                </Button.Group>
+
               </div>
               <StockChart data={data} {...this.state} />
             </div>

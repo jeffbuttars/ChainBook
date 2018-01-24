@@ -70,10 +70,6 @@ export default ({data, candlestick, regressions, dataLines}) => {
           />
       }
     >
-      <filter id="blurMe">
-        <feGaussianBlur in='StrokePaint' stdDeviation="1" />
-      </filter>
-
       <VictoryAxis
         tickValues={dataArray.map(t => t.time)}
         tickFormat={t => moment(t).format('M/D')}
@@ -126,6 +122,10 @@ export default ({data, candlestick, regressions, dataLines}) => {
 
     <Regressions name='regressionLines' data={data} {...regressions} />
     <DataLines name='dataLines' data={data} {...dataLines} />
+
+    <filter id="blurMe">
+      <feGaussianBlur in='StrokePaint' stdDeviation="1" />
+    </filter>
   </VictoryChart>
 )
 }
