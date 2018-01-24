@@ -1,10 +1,12 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { Dropdown, Menu, Icon } from 'semantic-ui-react'
+import { Dropdown, Menu, Icon, Image } from 'semantic-ui-react'
 import classNames from 'classnames'
 import Reduxer from 'comp-builder/reduxer'
 import * as web3Actions from 'web3/actions'
 import * as hodlActions from 'hodl/actions'
+import Logo from './Logo'
+{/* import logo from 'static/img/chainbook-logo.svg' */}
 
 const suiCurrencyMap = {
   EUR: 'euro',
@@ -86,6 +88,7 @@ class TopBar extends React.Component {
     return (
       <Menu fixed='top' inverted compact >
           <Menu.Item as={Link} to='/' header>
+            <Logo color="#FFFFFF" className='w2 h2 mr3 red' />
             ChainBook
           </Menu.Item>
 

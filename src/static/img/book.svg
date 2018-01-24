@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg version="1.1" viewBox="0 0 2000 2000" xmlns="http://www.w3.org/2000/svg">
+ <g transform="translate(0 947.64)">
+  <g transform="matrix(3.4388 0 0 3.4388 151.94 -2688.9)" fill-rule="evenodd">
+   <circle transform="rotate(-90)" cx="-796.79" cy="254.58" r="247.5" fill="#fff" stroke="#045" stroke-linecap="round" stroke-width="5"/>
+   <rect x="143.14" y="634.78" width="215.67" height="287.03" ry="19.535" fill="#fff" stroke="#045" stroke-linecap="round" stroke-width="8"/>
+   <rect x="143.14" y="621.53" width="215.67" height="278.94" ry="16.483" fill="#0a8" stroke="#045" stroke-linecap="round" stroke-width="8"/>
+   <rect x="143.29" y="621.53" width="12.914" height="299.91" fill="#045" stroke="#045" stroke-linecap="round" stroke-width="8"/>
+   <path d="m297.76 619.08h20.868l0.41502 65.573-10.434-13.822-10.434 13.822z" fill="#045"/>
+  </g>
+ </g>
+</svg>
