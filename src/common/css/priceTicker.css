@@ -1,0 +1,55 @@
+/*
+ *Color values are from Tachyons
+ * http://tachyons.io/docs/themes/skins/
+ *
+    dark-red
+    #E7040F
+
+    dark-green
+    #137752
+ *
+*/
+
+
+.easeFromRed {
+    -webkit-animation-name: redFadeToWhite; /* Safari 4.0 - 8.0 */
+    -webkit-animation-duration: 2s; /* Safari 4.0 - 8.0 */
+    animation-name: redFadeToWhite;
+    animation-duration: 2s;
+    animation-timing-function: ease;
+}
+/* Safari 4.0 - 8.0 */
+@-webkit-keyframes redFadeToWhite {
+    0% {color: #E7040F;}
+    50% {color: #E7040F;}
+    100% {color: white;}
+}
+
+/* Standard syntax */
+@keyframes redFadeToWhite {
+    0% {color: #E7040F;}
+    50% {color: #E7040F;}
+    100% {color: white;}
+}
+
+.easeFromGreen {
+    -webkit-animation-name: greenFadeToWhite; /* Safari 4.0 - 8.0 */
+    -webkit-animation-duration: 2s; /* Safari 4.0 - 8.0 */
+    animation-name: greenFadeToWhite;
+    animation-duration: 2s;
+    animation-timing-function: ease;
+}
+
+/* Safari 4.0 - 8.0 */
+@-webkit-keyframes greenFadeToWhite {
+    0% {color: #137752;}
+    50% {color: #137752;}
+    100% {color: white;}
+}
+
+/* Standard syntax */
+@keyframes greenFadeToWhite {
+    0% {color: #137752;}
+    50% {color: #137752;}
+    100% {color: white;}
+}

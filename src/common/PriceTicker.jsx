@@ -2,6 +2,7 @@ import React from 'react'
 import classNames from 'classnames'
 import { Icon } from 'semantic-ui-react'
 import { niceCryptoNum } from 'numberFormat'
+import './css/priceTicker.css'
 
 const suiCurrencyMap = {
   EUR: 'euro',
@@ -14,6 +15,22 @@ const suiCurrencyMap = {
   KRW: 'won',
   TRY: 'lira',
   ILS: 'shekel'
+}
+
+const calcIndicator = (price, lastPrice) =>
+  parseFloat(price, 10) >= parseFloat(lastPrice, 10) ? 'up' : 'down'
+
+const indicatorClasses = indicator => {
+  return indicator === 'up' ? 'dark-green' : 'dark-red'
+}
+
+const resetAnimation = (cls) => {
+    const elems = document.getElementsByClassName(cls)
+    for (let i=0; i < elems.length; i++) {
+      elems[i].style.animation = 'none'
+      elems[i].offsetHeight // Trigger a reflow
+      elems[i].style.animation = null
+    }
 }
 
 const CurrencyIcon = ({sym, ...rest}) => {
@@ -30,63 +47,49 @@ const CurrencyIcon = ({sym, ...rest}) => {
 }
 
 class PriceTicker extends React.Component {
-  constructor (props) {
-    super(props)
-    this._timer = null
-    this.state = {
-      timer: null
-    }
-  }
+  componentWillReceiveProps(nProps) {
+    // Hack to 'restart' the animation when the animation class name isn't changed
+    // from one tick to the next.
+    const {price, lastPrice} =  this.props
 
-  flashIndicator (indicator) {
-    const elems = document.getElementsByClassName('ticker-tranny')
-    for (let i=0; i < elems.length; i++) {
-      elems[i].style.transition = 'color 0.2s ease'
-      elems[i].style.color = indicator
-    }
+    const nextIndicator = calcIndicator(nProps.price, nProps.lastPrice)
+    const indicator = calcIndicator(price, lastPrice)
 
-    if (this._timer) {
+    if (nextIndicator !== indicator) {
       return
     }
 
-    this._timer = setTimeout(() => {
-      for (let i=0; i < elems.length; i++) {
-        elems[i].style.transition = 'color 0.5s ease'
-        elems[i].style.color = 'white'
-      }
-      this._timer = null
-    }, 1000)
+    resetAnimation('tickerTranny')
   }
 
   render () {
     const {fsym, tsym, price, lastPrice} =  this.props
-    const indicator = parseFloat(price, 10) >= parseFloat(lastPrice, 10) ? 'green' : 'red'
+    const indicator = calcIndicator(price, lastPrice)
+    const indicatorCls = indicatorClasses(indicator)
     const delta = lastPrice ? price - lastPrice : 0
     const deltaStr = Math.abs(niceCryptoNum(delta)) + ''
     const iName = delta < 0.0 ? 'minus' : 'plus'
-
-    // console.log('INIDICATOR', indicator, lastPrice, price, delta, deltaStr)
-    this.flashIndicator(indicator)
+    const flashCls = indicator === 'down' ? 'easeFromRed' : 'easeFromGreen'
 
     return (
       <div className='flex pr2 pt2'>
         <div className='flex mr2'>
           {deltaStr !== '0' && (
             <React.Fragment>
-              <Icon name={iName} size='small' style={{color: indicator}} className='pt2 mr2' />
-              <div style={{color: indicator}}> {deltaStr} </div>
+              <Icon name={iName} size='small' className={`${indicatorCls} pt2 mr2 b`} />
+              <div className={`${indicatorCls}`}> {deltaStr} </div>
             </React.Fragment>
           )}
         </div>
 
         <div className='flex flex-column pt1'>
-          <CurrencyIcon sym={fsym} className='f6 near-white' />
-          <CurrencyIcon sym={tsym} className='pt1 f6 near-white'/>
+          <CurrencyIcon sym={fsym} className='f6 white' />
+          <CurrencyIcon sym={tsym} className='pt1 f6 white'/>
         </div>
 
         <div className='flex flex-column f5'>
-          <div className='ticker-tranny b' style={{color: indicator}}> {fsym} </div>
-          <div className='ticker-tranny b' style={{color: indicator}}> {price} </div>
+          <div className={`tickerTranny b white ${flashCls}`} > {fsym} </div>
+          <div className={`tickerTranny b white ${flashCls}`} > {price} </div>
         </div>
       </div>
     )
