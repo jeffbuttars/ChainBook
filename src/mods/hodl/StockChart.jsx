@@ -47,6 +47,17 @@ const chartDataLabel = (data) => {
   return lines.join('\n')
 }
 
+// Add a SVG filter to blur the hover info label
+//
+// The filter will receive all the normal Victory component props, which it doesn't
+// care about, so wrap it, Victory can pass it's props without error and the filter
+// can ignore them.
+const FilterWrapper = (props) => (
+    <filter id="blurMe">
+      <feGaussianBlur in='StrokePaint' stdDeviation="1" />
+    </filter>
+)
+
 export default ({data, candlestick, regressions, dataLines}) => {
   const dataArray = data.reduce((p, v) => p.concat(v.toJS()), [])
 
@@ -70,6 +81,7 @@ export default ({data, candlestick, regressions, dataLines}) => {
           />
       }
     >
+      <FilterWrapper />
       <VictoryAxis
         tickValues={dataArray.map(t => t.time)}
         tickFormat={t => moment(t).format('M/D')}
@@ -123,9 +135,6 @@ export default ({data, candlestick, regressions, dataLines}) => {
     <Regressions name='regressionLines' data={data} {...regressions} />
     <DataLines name='dataLines' data={data} {...dataLines} />
 
-    <filter id="blurMe">
-      <feGaussianBlur in='StrokePaint' stdDeviation="1" />
-    </filter>
   </VictoryChart>
 )
 }
