@@ -47,9 +47,9 @@ const chartDataLabel = (data) => {
   return lines.join('\n')
 }
 
-const oneDay = 86400000;
-const dayLabel = t => moment(t).format('M/D')
-const hourLabel = t => moment(t).format('D / k:mm')
+const oneDay = 86400000
+const dayLabel = t => `${moment(t).format('MMM')}\n${moment(t).format('Do')}`
+const hourLabel = t => `${moment(t).format('ddd')}\n${moment(t).format('k:mm')}`
 const minLabel = t => moment(t).format('k:mm')
 
 // Add a SVG filter to blur the hover info label
