@@ -24,6 +24,8 @@ class TopBar extends React.Component {
       console.error('Unable to start ticker\n')
       console.error(e)
     }
+
+    this.props.actions.hodl.startDataSubscription()
   }
 
   static componentConnect = {

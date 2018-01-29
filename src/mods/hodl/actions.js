@@ -88,17 +88,40 @@ export const startPricePairTicker = (pairs = [['ETH', 'USD']]) => (dispatch, get
   pairs.map(pair => dispatch(getPricePair(...pair)))
 }
 
-export const startDataSubscription = createAction(
-  consts.START_DATA_SUBSCRIPTION,
-  (exchanges = [], pairs = [['ETH', 'USD']]) => {
-    const socket = new DurableWS(WS_BASE_URL)
-
-    const subId
-    const subStr = `${subId}~${exchange}~${fsym}~${tsym}`
-
-    socket.emit(subStr)
-
+const _streamData = createAction(
+  consts.DATA_SUBSCRIPTION_DATA,
+  (data) => {
+    console.log('DATA_SUBSCRIPTION_DATA', data)
+    return data
   }
 )
+
+const _startDataSubscription = createAction(
+  consts.START_DATA_SUBSCRIPTION,
+  (socket, queries) => {
+    console.log('_startDataSubscription', socket, queries)
+
+    if (!socket) {
+      socket = new DurableWS(WS_BASE_URL)
+    }
+
+    console.log('WEB SOCKET', socket)
+
+    const subs = queries.reduce((p, v) => p.concat(`${v.subId}~${v.exchange}~${v.fsym}~${v.tsym}`) ,[])
+
+    console.log('SUBSCRIBE', subs)
+    socket.send('SubAdd', {subs})
+
+    return socket
+  }
+)
+
+export const startDataSubscription = (queries = [{subId: consts.STREAM_SUB_CURRENT, exchange: 'CCCAGG', fsym: 'ETH', tsym: 'USD'}]) => (dispatch, getState) => {
+  const socket = getState().hodl.getIn(['stream', '_socket'])
+  const action = dispatch(_startDataSubscription(socket, queries))
+
+  console.log('SETTING WS CALLBACK', action)
+  action.payload.onmessage = (data) => dispatch(_streamData(data))
+}
 
 export const stopDataSubscription = createAction(consts.STOP_DATA_SUBSCRIPTION)

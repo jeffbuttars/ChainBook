@@ -1,6 +1,8 @@
-var CCC = CCC || {};
+/* eslint-disable */
 
-CCC.STATIC=CCC.STATIC || {};
+const CCC = {
+  STATIC: {}
+};
 
 CCC.STATIC.TYPE={
     'TRADE'                  : '0'
@@ -473,3 +475,5 @@ CCC.convertValueToDisplay =  function(symbol,value,type,fullNumbers){
       return prefix+CCC.noExponents((valueSign*valueAbs).toPrecision(decimalsOnSmallNumbers));
     }
   };
+
+export default CCC
