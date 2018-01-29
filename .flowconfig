@@ -1,0 +1,15 @@
+[ignore]
+<PROJECT_ROOT>/build/.*
+<PROJECT_ROOT>/node_modules/.*
+
+[include]
+<PROJECT_ROOT>/server
+
+[libs]
+[options]
+module.name_mapper='^common/\(.*\)' -> '<PROJECT_ROOT>/src/common/\1'
+module.name_mapper='^img/\(.*\)' -> '<PROJECT_ROOT>/src/img/\1'
+# module.name_mapper='(react-router-dom)' -> '<PROJECT_ROOT>/.empty'
+# module.name_mapper='(semantic-ui-react)' -> '<PROJECT_ROOT>/.empty'
+module.system.node.resolve_dirname=<PROJECT_ROOT>/node_modules
+unsafe.enable_getters_and_setters=true

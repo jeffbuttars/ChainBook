@@ -8,9 +8,12 @@
     "eslint-config-semistandard": "^12.0.0",
     "eslint-config-standard": "^11.0.0-beta.0",
     "eslint-plugin-react": "^7.5.1",
-    "react-scripts": "1.0.17"
+    "flow": "^0.2.3",
+    "react-scripts": "1.0.17",
+    "tern": "^0.21.0"
   },
   "dependencies": {
+    "ReconnectingWebSocket": "git+https://github.com/joewalnes/reconnecting-websocket.git",
     "axios": "^0.17.1",
     "classnames": "^2.2.5",
     "cryptofont": "^0.1.1",

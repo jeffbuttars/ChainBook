@@ -1,19 +1,21 @@
 import { createAction } from 'redux-actions'
+import DurableWS from 'ReconnectingWebSocket'
 import axios from 'axios'
 import * as consts from './constants'
 
 const tickerRefresh = process.env.REACT_APP_TICKER_REFRESH_MS ? parseInt(process.env.REACT_APP_TICKER_REFRESH_MS, 10) : null
-const API_BASE = 'https://min-api.cryptocompare.com/data'
+const API_BASE_URL = 'https://min-api.cryptocompare.com/data'
+const WS_BASE_URL = 'wss://streamer.cryptocompare.com'
 
 const getMinuteHistoryURL = (symbol, days, priceIn) =>
-  `${API_BASE}/histominute?fsym=${symbol}&tsym=${priceIn}&limit=${days}`
+  `${API_BASE_URL}/histominute?fsym=${symbol}&tsym=${priceIn}&limit=${days}`
 const getHourHistoryURL = (symbol, days, priceIn) =>
-  `${API_BASE}/histohour?fsym=${symbol}&tsym=${priceIn}&limit=${days}`
+  `${API_BASE_URL}/histohour?fsym=${symbol}&tsym=${priceIn}&limit=${days}`
 const getDailyHistoryURL = (symbol, days, priceIn) =>
-  `${API_BASE}/histoday?fsym=${symbol}&tsym=${priceIn}&limit=${days}`
+  `${API_BASE_URL}/histoday?fsym=${symbol}&tsym=${priceIn}&limit=${days}`
 
 const getPricePairURL = (from, to) =>
-  `${API_BASE}/price?fsym=${from}&tsyms=${to}&extraParmas=ChainBook`
+  `${API_BASE_URL}/price?fsym=${from}&tsyms=${to}&extraParmas=ChainBook`
 
 const intervalMap = {
   '1Y': (symbol, priceIn) => getDailyHistoryURL(symbol, 365, priceIn), // One Year
@@ -85,3 +87,17 @@ export const startPricePairTicker = (pairs = [['ETH', 'USD']]) => (dispatch, get
   // console.log('startPricePairTicker pairs', pairs, ...pairs)
   pairs.map(pair => dispatch(getPricePair(...pair)))
 }
+
+export const startDataSubscription = createAction(
+  consts.START_DATA_SUBSCRIPTION,
+  (exchanges = [], pairs = [['ETH', 'USD']]) => {
+    const socket = new DurableWS(WS_BASE_URL)
+
+    const subsStr = `${subId}~${exchange}~${fsym}~${tsym}`
+  }
+)
+
+export const stopDataSubscription = createAction(
+  consts.STOP_DATA_SUBSCRIPTION,
+  () => {}
+)
