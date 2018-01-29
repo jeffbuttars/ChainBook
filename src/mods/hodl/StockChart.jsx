@@ -81,7 +81,7 @@ export default class extends React.Component {
   }
 
   componentWillUnmount () {
-    window.removeEventListener('resize')
+    window.removeEventListener('resize', this.updateDimensions.bind(this))
   }
 
   updateDimensions () {
