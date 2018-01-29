@@ -93,11 +93,12 @@ export const startDataSubscription = createAction(
   (exchanges = [], pairs = [['ETH', 'USD']]) => {
     const socket = new DurableWS(WS_BASE_URL)
 
-    const subsStr = `${subId}~${exchange}~${fsym}~${tsym}`
+    const subId
+    const subStr = `${subId}~${exchange}~${fsym}~${tsym}`
+
+    socket.emit(subStr)
+
   }
 )
 
-export const stopDataSubscription = createAction(
-  consts.STOP_DATA_SUBSCRIPTION,
-  () => {}
-)
+export const stopDataSubscription = createAction(consts.STOP_DATA_SUBSCRIPTION)

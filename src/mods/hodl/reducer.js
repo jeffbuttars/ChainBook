@@ -6,14 +6,40 @@ const defaults = Map({
   'ETH': Map({
     byDay: OrderedMap()
   }),
+  'stream': Map({
+    '_socket': null
+  }),
   'tickers': Map({'cur': Map(), 'prev': Map()}),
   '_tickers_timer': null
 })
 
 export default handleActions({
   [consts.TICKER_TIMER_REF]: (state, action) => state.set('_tickers_timer', action.payload),
-  [consts.GET_PRICE_PAIR]: (state, action) => {
+  [consts.START_DATA_SUBSCRIPTION]: (state, action) => {
+    console.log('START_DATA_SUBSCRIPTION:', action.payload)
+    if (action.error) {
+      console.error('START_DATA_SUBSCRIPTION:', action.payload)
+      return state
+    }
 
+    return state.setIn(['stream', '_socket'], action.payload)
+  },
+  [consts.STOP_DATA_SUBSCRIPTION]: (state, action) => {
+    console.log('STOP_DATA_SUBSCRIPTION:', action.payload)
+    if (action.error) {
+      console.error('STOP_DATA_SUBSCRIPTION:', action.payload)
+      return state
+    }
+
+    const socket = state.getIn(['stream', '_socket'])
+
+    if (socket) {
+      socket.close()
+    }
+
+    return state.setIn(['stream', '_socket'], null)
+  },
+  [consts.GET_PRICE_PAIR]: (state, action) => {
     if (action.error) {
       console.error('GET:', action.payload)
       return state
