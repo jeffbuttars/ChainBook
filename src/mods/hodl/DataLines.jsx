@@ -5,7 +5,8 @@ export const dataLineColors = {
   close: {color: '#222222', backgroundColor: '#EEE'},
   open: {color: '#FFA500', backgroundColor: '#EEE'},
   low: {color: '#FF3333', backgroundColor: '#EEE'},
-  high: {color: '#33CC33', backgroundColor: '#EEE'}
+  high: {color: '#33CC33', backgroundColor: '#EEE'},
+  ema: {color: '#222222', backgroundColor: '#EEE'}
 }
 
 const calcLines = (data) => {
@@ -30,7 +31,7 @@ const calcLines = (data) => {
   }, dataShape)
 }
 
-const lineStyle = (line) => ({
+export const lineStyle = (line) => ({
   data: {
     strokeWidth: 0.5, strokeOpacity: 0.6, stroke: dataLineColors[line].color
   }

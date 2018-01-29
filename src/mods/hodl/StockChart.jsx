@@ -10,6 +10,7 @@ import {
 } from 'victory'
 import Regressions from './Regressions'
 import DataLines from './DataLines'
+import Ema from './Ema'
 
 const getYAxis = (data) => {
   const allValues = data.reduce((p, v) => {
@@ -138,7 +139,7 @@ export default class extends React.Component {
             textAnchor='left'
             labelComponent={
               <VictoryTooltip
-                style={{fontSize: 5, strokeWidth: 0.5, strokeOpacity: 0.5}}
+                style={{fontSize: 12, strokeWidth: 0.5, strokeOpacity: 0.5}}
                 flyoutStyle={{strokeWidth: 0, fill: '#FFF', fillOpacity: 0.8, filter: 'url(#blurMe)'}}
 
               />
@@ -200,6 +201,7 @@ export default class extends React.Component {
 
       <Regressions name='regressionLines' data={data} {...regressions} />
       <DataLines name='dataLines' data={data} {...dataLines} />
+      <Ema name='ema' data={dataArray} />
 
     </VictoryChart>
     )

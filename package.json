@@ -15,6 +15,7 @@
     "classnames": "^2.2.5",
     "cryptofont": "^0.1.1",
     "datalib": "^1.8.0",
+    "exponential-moving-average": "^1.0.0",
     "history": "^4.7.2",
     "immutable": "^3.8.2",
     "moment": "^2.20.1",
