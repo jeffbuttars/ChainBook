@@ -5,7 +5,7 @@ import * as consts from './constants'
 
 const tickerRefresh = process.env.REACT_APP_TICKER_REFRESH_MS ? parseInt(process.env.REACT_APP_TICKER_REFRESH_MS, 10) : null
 const API_BASE_URL = 'https://min-api.cryptocompare.com/data'
-const WS_BASE_URL = 'wss://streamer.cryptocompare.com'
+const WS_BASE_URL = 'wss://streamer.cryptocompare.com/socket.io/?EIO=3&transport=websocket'
 
 const getMinuteHistoryURL = (symbol, days, priceIn) =>
   `${API_BASE_URL}/histominute?fsym=${symbol}&tsym=${priceIn}&limit=${days}`
@@ -106,11 +106,14 @@ const _startDataSubscription = createAction(
     }
 
     console.log('WEB SOCKET', socket)
+    socket.onopen = event => {
+      console.log('WEB SOCKET ON OPEN', event)
+    }
 
-    const subs = queries.reduce((p, v) => p.concat(`${v.subId}~${v.exchange}~${v.fsym}~${v.tsym}`) ,[])
+    // const subs = queries.reduce((p, v) => p.concat(`${v.subId}~${v.exchange}~${v.fsym}~${v.tsym}`) ,[])
 
-    console.log('SUBSCRIBE', subs)
-    socket.send('SubAdd', {subs})
+    // console.log('SUBSCRIBE', subs)
+    // socket.send('SubAdd', {subs})
 
     return socket
   }
