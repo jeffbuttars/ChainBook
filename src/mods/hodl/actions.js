@@ -108,12 +108,13 @@ const _startDataSubscription = createAction(
     console.log('WEB SOCKET', socket)
     socket.onopen = event => {
       console.log('WEB SOCKET ON OPEN', event)
+      const subs = queries.reduce((p, v) => p.concat(`${v.subId}~${v.exchange}~${v.fsym}~${v.tsym}`) ,[])
+
+      console.log('SUBSCRIBE', 'SubAdd', {subs})
+      socket.send('SubAdd', {subs})
+      socket.onopen = (event) => {}
     }
 
-    // const subs = queries.reduce((p, v) => p.concat(`${v.subId}~${v.exchange}~${v.fsym}~${v.tsym}`) ,[])
-
-    // console.log('SUBSCRIBE', subs)
-    // socket.send('SubAdd', {subs})
 
     return socket
   }
