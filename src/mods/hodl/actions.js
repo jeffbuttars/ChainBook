@@ -1,11 +1,11 @@
 import { createAction } from 'redux-actions'
-import DurableWS from 'ReconnectingWebSocket'
+import SocketIO from 'socket.io-client'
 import axios from 'axios'
 import * as consts from './constants'
 
-const tickerRefresh = process.env.REACT_APP_TICKER_REFRESH_MS ? parseInt(process.env.REACT_APP_TICKER_REFRESH_MS, 10) : null
+// const tickerRefresh = process.env.REACT_APP_TICKER_REFRESH_MS ? parseInt(process.env.REACT_APP_TICKER_REFRESH_MS, 10) : null
 const API_BASE_URL = 'https://min-api.cryptocompare.com/data'
-const WS_BASE_URL = 'wss://streamer.cryptocompare.com/socket.io/?EIO=3&transport=websocket'
+const WS_BASE_URL = 'https://streamer.cryptocompare.com'
 
 const getMinuteHistoryURL = (symbol, days, priceIn) =>
   `${API_BASE_URL}/histominute?fsym=${symbol}&tsym=${priceIn}&limit=${days}`
@@ -52,7 +52,7 @@ export const getDailyHistory = createAction(
   }
 )
 
-const _tickerTimerRef = createAction(consts.TICKER_TIMER_REF, timer => timer)
+// const _tickerTimerRef = createAction(consts.TICKER_TIMER_REF, timer => timer)
 
 export const getPricePair = createAction(
   consts.GET_PRICE_PAIR,
@@ -78,54 +78,44 @@ export const startPricePairTicker = (pairs = [['ETH', 'USD']]) => (dispatch, get
       clearTimeout(_timer)
   }
 
-  if (tickerRefresh) {
-    dispatch(_tickerTimerRef(
-      setTimeout(dispatch, tickerRefresh, startPricePairTicker(pairs))
-    ))
-  }
+  // if (tickerRefresh) {
+  //   dispatch(_tickerTimerRef(
+  //     setTimeout(dispatch, tickerRefresh, startPricePairTicker(pairs))
+  //   ))
+  // }
 
   // console.log('startPricePairTicker pairs', pairs, ...pairs)
   pairs.map(pair => dispatch(getPricePair(...pair)))
 }
 
-const _streamData = createAction(
-  consts.DATA_SUBSCRIPTION_DATA,
-  (data) => {
-    console.log('DATA_SUBSCRIPTION_DATA', data)
-    return data
-  }
-)
+const _streamData = createAction(consts.DATA_SUBSCRIPTION_DATA)
+const _streamSocket = createAction(consts.START_DATA_SUBSCRIPTION)
 
-const _startDataSubscription = createAction(
-  consts.START_DATA_SUBSCRIPTION,
-  (socket, queries) => {
-    console.log('_startDataSubscription', socket, queries)
+export const startDataSubscription = (queries) => (dispatch, getState) => {
+  console.log('startDataSubscription')
 
-    if (!socket) {
-      socket = new DurableWS(WS_BASE_URL)
-    }
+  // Get or create the socket
+  const socket = getState().hodl.getIn(['stream', '_socket']) || new SocketIO(WS_BASE_URL)
+  console.log('WS FROM STATE', socket)
 
-    console.log('WEB SOCKET', socket)
-    socket.onopen = event => {
-      console.log('WEB SOCKET ON OPEN', event)
-      const subs = queries.reduce((p, v) => p.concat(`${v.subId}~${v.exchange}~${v.fsym}~${v.tsym}`) ,[])
+  // Set the socket in the store
+  dispatch(_streamSocket(socket))
 
-      console.log('SUBSCRIBE', 'SubAdd', {subs})
-      socket.send('SubAdd', {subs})
-      socket.onopen = (event) => {}
-    }
+  // Build the subscription strings from the query objects
+  queries = queries || [
+    // {subId: consts.STREAM_SUB_TRADE, exchange: 'Coinbase', fsym: 'ETH', tsym: 'USD'},
+    {subId: consts.STREAM_SUB_CURRENT, exchange: 'Coinbase', fsym: 'ETH', tsym: 'USD'}
+    // {subId: consts.STREAM_SUB_CURRENTAGG, exchange: 'Coinbase', fsym: 'ETH', tsym: 'USD'}
+  ]
+  const subs = queries.reduce((p, v) => p.concat(`${v.subId}~${v.exchange}~${v.fsym}~${v.tsym}`) ,[])
 
+  console.log('SUBSCRIBE', 'SubAdd', {subs})
+  // Subscribe !
+  socket.emit('SubAdd', {subs})
 
-    return socket
-  }
-)
-
-export const startDataSubscription = (queries = [{subId: consts.STREAM_SUB_CURRENT, exchange: 'CCCAGG', fsym: 'ETH', tsym: 'USD'}]) => (dispatch, getState) => {
-  const socket = getState().hodl.getIn(['stream', '_socket'])
-  const action = dispatch(_startDataSubscription(socket, queries))
-
-  console.log('SETTING WS CALLBACK', action)
-  action.payload.onmessage = (data) => dispatch(_streamData(data))
+  console.log('SETTING WS CALLBACK', socket)
+  // Dispatch the data as it comes in
+  socket.on('m', msg => dispatch(_streamData(msg)))
 }
 
 export const stopDataSubscription = createAction(consts.STOP_DATA_SUBSCRIPTION)
