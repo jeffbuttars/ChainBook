@@ -10,3 +10,6 @@ export const DATA_SUBSCRIPTION_DATA = Symbol('HODL/DATA_SUBSCRIPTION_DATA').toSt
 export const STREAM_SUB_TRADE = 0
 export const STREAM_SUB_CURRENT = 2
 export const STREAM_SUB_CURRENTAGG = 5
+
+// Don't keep more the 128 stream entries in the store for each pair
+export const STREAM_HISTORY_MAX = 128

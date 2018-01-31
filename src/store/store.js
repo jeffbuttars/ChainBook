@@ -19,9 +19,7 @@ function addMiddleware (mw) {
 
 export default function makeStore (initial = {}) {
   const composeEnhancers = (process.env.NODE_ENV === 'development' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) ?
-    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
-      serialize: true
-    }) : compose
+    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({}) : compose
 
     const store = createStore(reducer(), initial, composeEnhancers(
       applyMiddleware(...middleWares.toJS())

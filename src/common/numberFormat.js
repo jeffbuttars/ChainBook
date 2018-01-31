@@ -2,5 +2,5 @@
 export const niceCryptoNum = (num) => {
   const fl = parseFloat(num)
 
-  return fl < 10.0 ? fl.toFixed(4) : fl.toFixed(2)
+  return Math.abs(fl) < 1.0 ? fl.toFixed(4) : fl.toFixed(2)
 }

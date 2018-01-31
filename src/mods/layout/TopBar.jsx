@@ -1,53 +1,23 @@
 import React from 'react'
-import { Map } from 'immutable'
 import { Link } from 'react-router-dom'
 import { Dropdown, Menu } from 'semantic-ui-react'
 import Reduxer from 'comp-builder/reduxer'
-import * as web3Actions from 'web3/actions'
 import * as hodlActions from 'hodl/actions'
 import Logo from './Logo'
 import PriceTicker from 'PriceTicker'
 
 class TopBar extends React.Component {
-  componentDidMount() {
-    // Kick off the gas price retreiver
-    try {
-      this.props.actions.web3.getGlobalInfo()
-    } catch(e) {
-      console.error('Unable to fetch global chain info\n')
-      console.error(e)
-    }
-
-    try {
-      this.props.actions.hodl.startPricePairTicker([['ETH', 'USD']])
-    } catch(e) {
-      console.error('Unable to start ticker\n')
-      console.error(e)
-    }
-
+  componentWillMount() {
     this.props.actions.hodl.startDataSubscription()
   }
 
   static componentConnect = {
-    state: {
-      'hodl': ':object'
-    },
     actions: {
-      'web3': web3Actions,
       'hodl': hodlActions
     }
   }
 
   render () {
-    const {hodl} = this.props
-
-    // This is crap, but grab the first value for now
-    const fsym = 'ETH'
-    const tick = hodl.getIn(['tickers', 'cur', fsym])
-    const prevTick = hodl.getIn(['tickers', 'prev', fsym], Map())
-    const [tsym, price] = tick ? tick.entrySeq().get(0, ['', '']) : ['', '']
-    const lastPrice = prevTick.get(tsym, 0.0)
-
     return (
       <Menu fixed='top' inverted compact >
           <Menu.Item as={Link} to='/' header>
@@ -76,7 +46,7 @@ class TopBar extends React.Component {
           </Dropdown>
 
           <Menu.Menu position='right'>
-            <PriceTicker tsym={tsym} fsym={fsym} price={price} lastPrice={lastPrice}/>
+            <PriceTicker />
           </Menu.Menu>
       </Menu>
       )

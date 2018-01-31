@@ -3,7 +3,6 @@ import SocketIO from 'socket.io-client'
 import axios from 'axios'
 import * as consts from './constants'
 
-// const tickerRefresh = process.env.REACT_APP_TICKER_REFRESH_MS ? parseInt(process.env.REACT_APP_TICKER_REFRESH_MS, 10) : null
 const API_BASE_URL = 'https://min-api.cryptocompare.com/data'
 const WS_BASE_URL = 'https://streamer.cryptocompare.com'
 
@@ -52,8 +51,6 @@ export const getDailyHistory = createAction(
   }
 )
 
-// const _tickerTimerRef = createAction(consts.TICKER_TIMER_REF, timer => timer)
-
 export const getPricePair = createAction(
   consts.GET_PRICE_PAIR,
   (fsym, to) => {
@@ -70,23 +67,6 @@ export const getPricePair = createAction(
   }
 )
 
-export const startPricePairTicker = (pairs = [['ETH', 'USD']]) => (dispatch, getState) => {
-  const state = getState()
-  const _timer = state.hodl.get('_tickers_timer')
-
-  if (_timer) {
-      clearTimeout(_timer)
-  }
-
-  // if (tickerRefresh) {
-  //   dispatch(_tickerTimerRef(
-  //     setTimeout(dispatch, tickerRefresh, startPricePairTicker(pairs))
-  //   ))
-  // }
-
-  // console.log('startPricePairTicker pairs', pairs, ...pairs)
-  pairs.map(pair => dispatch(getPricePair(...pair)))
-}
 
 const _streamData = createAction(consts.DATA_SUBSCRIPTION_DATA)
 const _streamSocket = createAction(consts.START_DATA_SUBSCRIPTION)
@@ -104,16 +84,14 @@ export const startDataSubscription = (queries) => (dispatch, getState) => {
   // Build the subscription strings from the query objects
   queries = queries || [
     // {subId: consts.STREAM_SUB_TRADE, exchange: 'Coinbase', fsym: 'ETH', tsym: 'USD'},
-    {subId: consts.STREAM_SUB_CURRENT, exchange: 'Coinbase', fsym: 'ETH', tsym: 'USD'}
-    // {subId: consts.STREAM_SUB_CURRENTAGG, exchange: 'Coinbase', fsym: 'ETH', tsym: 'USD'}
+    {subId: consts.STREAM_SUB_CURRENT, exchange: 'Coinbase', fsym: 'ETH', tsym: 'USD'},
+    {subId: consts.STREAM_SUB_CURRENTAGG, exchange: 'Coinbase', fsym: 'ETH', tsym: 'USD'}
   ]
   const subs = queries.reduce((p, v) => p.concat(`${v.subId}~${v.exchange}~${v.fsym}~${v.tsym}`) ,[])
 
-  console.log('SUBSCRIBE', 'SubAdd', {subs})
   // Subscribe !
   socket.emit('SubAdd', {subs})
 
-  console.log('SETTING WS CALLBACK', socket)
   // Dispatch the data as it comes in
   socket.on('m', msg => dispatch(_streamData(msg)))
 }

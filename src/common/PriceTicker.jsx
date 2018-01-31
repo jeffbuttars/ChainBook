@@ -1,6 +1,8 @@
 import React from 'react'
+import { List, Map } from 'immutable'
 import classNames from 'classnames'
-import { Icon } from 'semantic-ui-react'
+import { Icon, Popup } from 'semantic-ui-react'
+import Reduxer from 'comp-builder/reduxer'
 import { niceCryptoNum } from 'numberFormat'
 import './css/priceTicker.css'
 
@@ -28,7 +30,7 @@ const resetAnimation = (cls) => {
     const elems = document.getElementsByClassName(cls)
     for (let i=0; i < elems.length; i++) {
       elems[i].style.animation = 'none'
-      elems[i].offsetHeight // Trigger a reflow
+      elems[i].style.animation = elems[i].offsetHeight // Trigger a reflow
       elems[i].style.animation = null
     }
 }
@@ -47,13 +49,37 @@ const CurrencyIcon = ({sym, ...rest}) => {
 }
 
 class PriceTicker extends React.Component {
+  constructor (props) {
+    super(props)
+    //
+    // This is hardcoded config crap for now
+    this.state = {
+      exchange: 'coinbase',
+      pair: 'ETH:USD'
+    }
+  }
+
   componentWillReceiveProps(nProps) {
     // Hack to 'restart' the animation when the animation class name isn't changed
     // from one tick to the next.
-    const {price, lastPrice} =  this.props
+    const { stream } = this.props
+    const { exchange, pair } = this.state
 
-    const nextIndicator = calcIndicator(nProps.price, nProps.lastPrice)
-    const indicator = calcIndicator(price, lastPrice)
+    const data = stream.getIn([exchange, pair, 'data'], Map())
+    const nextData = nProps.stream.getIn([exchange, pair, 'data'], Map())
+
+    const cur = data.get(0)
+    const prev = data.get(1, cur)
+
+    const nextCur = nextData.get(0)
+    const nextPrev = nextData.get(1, nextCur)
+
+    if (!(cur && nextCur)) {
+      return
+    }
+
+    const nextIndicator = calcIndicator(nextCur.get('price'), nextPrev.get('price'))
+    const indicator = calcIndicator(cur.get('price'), prev.get('price'))
 
     if (nextIndicator !== indicator) {
       return
@@ -62,38 +88,67 @@ class PriceTicker extends React.Component {
     resetAnimation('tickerTranny')
   }
 
-  render () {
-    const {fsym, tsym, price, lastPrice} =  this.props
+  static componentConnect = {
+    state: {
+      'stream': 'hodl.stream:object'
+    }
+  }
+
+  renderTicker (history) {
+    const data = history.get('data', List())
+    const cur = data.get(0)
+    const prev = data.get(1, cur)
+
+    const {fsym, tsym, price} =  cur.toJS()
+    const lastPrice = prev ? prev.get('price') : price
+
+    const changePct = niceCryptoNum(history.get('change24HourPct'))
+    const change = niceCryptoNum(history.get('change24Hour'))
+
     const indicator = calcIndicator(price, lastPrice)
-    const indicatorCls = indicatorClasses(indicator)
-    const delta = lastPrice ? price - lastPrice : 0
-    const deltaStr = Math.abs(niceCryptoNum(delta)) + ''
-    const iName = delta < 0.0 ? 'minus' : 'plus'
+    const indicatorCls = indicatorClasses(change < 0 ? 'down' : 'up')
     const flashCls = indicator === 'down' ? 'easeFromRed' : 'easeFromGreen'
 
     return (
       <div className='flex pr2 pt2'>
-        <div className='flex mr2'>
-          {deltaStr !== '0' && (
-            <React.Fragment>
-              <Icon name={iName} size='small' className={`${indicatorCls} pt2 mr2 b`} />
-              <div className={`${indicatorCls}`}> {deltaStr} </div>
-            </React.Fragment>
-          )}
-        </div>
-
         <div className='flex flex-column pt1'>
           <CurrencyIcon sym={fsym} className='f6 white' />
           <CurrencyIcon sym={tsym} className='pt1 f6 white'/>
         </div>
 
-        <div className='flex flex-column f5'>
+        <div className='flex flex-column f5 mr3'>
           <div className={`tickerTranny b white ${flashCls}`} > {fsym} </div>
           <div className={`tickerTranny b white ${flashCls}`} > {price} </div>
         </div>
+
+        <Popup
+          header='24 Hour Change'
+          trigger={
+            <div className='flex flex-column mr2'>
+              <div className={`${indicatorCls}`}> {change} </div>
+              <div className={`${indicatorCls}`}> {changePct} % </div>
+            </div>
+          }
+        />
       </div>
     )
   }
+
+  render () {
+    const { stream } = this.props
+    const { exchange, pair } = this.state
+    const history = stream.getIn([exchange, pair], Map())
+
+    return history.get('data', List()).has(0) ? this.renderTicker(history) :
+      (
+        <div className='flex items-center pr4'>
+          <Popup
+            content='Loading Price Data'
+            trigger={<Icon name='spinner' loading />}
+          />
+      </div>
+  )
+  }
 }
 
-export default PriceTicker
+export default Reduxer(PriceTicker)

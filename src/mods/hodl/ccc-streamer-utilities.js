@@ -253,7 +253,7 @@ CCC.TRADE.unpack = function(tradeString){
             currentField++;
         }
     }
-    
+
     return unpackedTrade;
 }
 
