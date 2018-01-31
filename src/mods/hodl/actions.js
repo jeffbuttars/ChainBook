@@ -70,6 +70,7 @@ export const getPricePair = createAction(
 
 const _streamData = createAction(consts.DATA_SUBSCRIPTION_DATA)
 const _streamSocket = createAction(consts.START_DATA_SUBSCRIPTION)
+const _streamStarted = createAction(consts.DATA_SUBSCRIPTION_STARTED)
 
 export const startDataSubscription = (queries) => (dispatch, getState) => {
   console.log('startDataSubscription')
@@ -94,6 +95,8 @@ export const startDataSubscription = (queries) => (dispatch, getState) => {
 
   // Dispatch the data as it comes in
   socket.on('m', msg => dispatch(_streamData(msg)))
+
+  dispatch(_streamStarted(socket))
 }
 
 export const stopDataSubscription = createAction(consts.STOP_DATA_SUBSCRIPTION)

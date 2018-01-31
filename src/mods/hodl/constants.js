@@ -5,6 +5,7 @@ export const TICKER_TIMER_REF = Symbol('HODL/TICKER_TIMER_REF').toString()
 export const START_DATA_SUBSCRIPTION = Symbol('HODL/START_DATA_SUBSCRIPTION').toString()
 export const STOP_DATA_SUBSCRIPTION = Symbol('HODL/STOP_DATA_SUBSCRIPTION').toString()
 export const DATA_SUBSCRIPTION_DATA = Symbol('HODL/DATA_SUBSCRIPTION_DATA').toString()
+export const DATA_SUBSCRIPTION_STARTED = Symbol('HODL/DATA_SUBSCRIPTION_STARTED').toString()
 
 
 export const STREAM_SUB_TRADE = 0
