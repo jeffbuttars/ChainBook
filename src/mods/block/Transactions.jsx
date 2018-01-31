@@ -27,10 +27,11 @@ class Transactions extends React.Component {
   }
 
   render () {
-    const { match: { params: { number } }, blocks, transaction } = this.props
-
+    const { match: { params: { number } }, blocks, transaction, web3 } = this.props
     const blk = blocks.get(number)
+
     console.log('BLK', blk)
+    console.log('WEB3', web3)
 
     if (!blk) {
       return (
@@ -47,7 +48,7 @@ class Transactions extends React.Component {
     return (
       <div>
         {blk.get('transactions', List).map(
-            (hash, idx) => <TransCard key={idx} {...transaction.get(hash, Map()).toJS()}/>
+            (tran, idx) => <TransCard key={idx} transaction={transaction.get(tran, Map())} web3={web3}/>
           )}
       </div>
       )
