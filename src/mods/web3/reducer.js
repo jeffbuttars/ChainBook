@@ -47,9 +47,6 @@ export default handleActions({
       return state
     }
 
-    // if (gasPrice === '0') {
-    //   return state.set('gasPrice', Map({wei: '', eth: ''}))
-    // }
     return state.set('gasPrice', Map({wei: gasPrice, eth: web3Local.utils.fromWei(gasPrice)}))
   }
 },
